@@ -1,4 +1,4 @@
-package com.nicolaspaiva.finance_vault.user;
+package com.nicolaspaiva.finance_vault.user.repository;
 
 import com.nicolaspaiva.finance_vault.user.entity.Role;
 import com.nicolaspaiva.finance_vault.user.entity.UserEntity;

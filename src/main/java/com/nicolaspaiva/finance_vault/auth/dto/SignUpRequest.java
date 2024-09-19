@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * Represents the object required
- * to perform sign up to the API.
+ * to perform sign up.
  */
 @Data
 @NoArgsConstructor

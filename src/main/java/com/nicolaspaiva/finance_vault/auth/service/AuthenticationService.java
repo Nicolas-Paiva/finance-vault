@@ -2,14 +2,15 @@ package com.nicolaspaiva.finance_vault.auth.service;
 
 import com.nicolaspaiva.finance_vault.auth.dto.*;
 
+import java.util.Optional;
+
 /**
- * The authentication service is responsible for
- * providing functionality regarding user authentication,
- * including sign in and sign up.
+ * Service responsible for
+ * sign in and sign up functionality
  */
 public interface AuthenticationService {
 
-    // Signs a user up
+    // Signs a user up, also creating their bank account
     SignUpResponse signUp(SignUpRequest request);
 
     // Signs a user in

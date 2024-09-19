@@ -33,7 +33,7 @@ public class JwtServiceImpl implements JwtService{
                 .subject(userDetails.getUsername())
                 .claim("roles", roles)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() * 1000 * 60 * 60 * 24))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15))
                 .issuer("Finance Vault")
                 .signWith(getSigningKey(), Jwts.SIG.HS256)
                 .compact();

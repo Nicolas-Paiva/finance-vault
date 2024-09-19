@@ -1,4 +1,4 @@
-package com.nicolaspaiva.finance_vault.bankaccount;
+package com.nicolaspaiva.finance_vault.bankaccount.controller;
 
 import com.nicolaspaiva.finance_vault.bankaccount.service.BankAccountService;
 import lombok.RequiredArgsConstructor;

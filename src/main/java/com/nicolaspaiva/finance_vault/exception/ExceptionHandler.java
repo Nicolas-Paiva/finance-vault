@@ -9,13 +9,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
 public class ExceptionHandler {
+
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @org.springframework.web.bind.annotation.ExceptionHandler(MethodArgumentNotValidException.class)
@@ -33,6 +32,11 @@ public class ExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
+
+    /**
+     * Handles authentication exceptions,
+     * such as wrong password or email
+     */
     @org.springframework.web.bind.annotation.ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Map<String, String>> handleAuthenticationException(AuthenticationException ex) {
 
@@ -40,6 +44,15 @@ public class ExceptionHandler {
         authenticationError.put("error", "Invalid username or password");
 
         return new ResponseEntity<>(authenticationError, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * Handles exceptions when the
+     * user is not found
+     */
+    @org.springframework.web.bind.annotation.ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
 

@@ -6,7 +6,7 @@ import com.nicolaspaiva.finance_vault.bankaccount.service.BankAccountService;
 import com.nicolaspaiva.finance_vault.security.jwt.JwtService;
 import com.nicolaspaiva.finance_vault.user.entity.Role;
 import com.nicolaspaiva.finance_vault.user.entity.UserEntity;
-import com.nicolaspaiva.finance_vault.user.UserRepository;
+import com.nicolaspaiva.finance_vault.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -41,37 +42,22 @@ public class AuthenticationServiceImpl implements AuthenticationService{
      * Password validation is
      * provided by Spring Validation.<br>
      *
-     * The user's bank account
-     * is created during the process
-     * @param signUpRequest the request received by
-     * the signup API
-     * @return a SignUpResponse, containing a message as
-     * well as a created status (true or false)
      */
     public SignUpResponse signUp(SignUpRequest signUpRequest){
 
-        UserEntity user;
+        // Checks whether the provided email already exists
+        if(emailAlreadyExists(signUpRequest.getEmail())){
+            return new SignUpResponse(false, "Email already exists");
+        }
 
         try{
 
-            // Checks whether the provided email already exists
-            if(emailAlreadyExists(signUpRequest.getEmail())){
-                return new SignUpResponse(false, "Email already exists");
-            }
-
-
-            // Creates the user entity
-             user = UserEntity.builder()
-                    .firstName(signUpRequest.getFirstName())
-                    .lastName(signUpRequest.getLastName())
-                    .email(signUpRequest.getEmail())
-                    .password(passwordEncoder.encode((signUpRequest.getPassword())))
-                    .role(Role.USER)
-                    .build();
+            UserEntity user = createUserEntity(signUpRequest);
 
             // Creates the user bank account
             BankAccountEntity bankAccount = bankAccountService.createBankAccount(user);
 
+            // When the user is saved, the bank account is saved due to cascading
             user.setAccount(bankAccount);
 
             userRepository.save(user);
@@ -79,18 +65,30 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
         } catch (Exception e){
             e.getLocalizedMessage();
-            return new SignUpResponse().failed();
+            return SignUpResponse.failed();
         }
 
-        return new SignUpResponse().success();
+        return SignUpResponse.success();
+    }
+
+    /**
+     * Creates a user entity based on a SignUpRequest
+     */
+    private UserEntity createUserEntity(SignUpRequest signUpRequest){
+        return UserEntity.builder()
+                .firstName(signUpRequest.getFirstName())
+                .lastName(signUpRequest.getLastName())
+                .email(signUpRequest.getEmail())
+                .password(passwordEncoder.encode((signUpRequest.getPassword())))
+                .role(Role.USER)
+                .createdAt(LocalDateTime.now())
+                .build();
     }
 
 
     /**
      * Checks whether the provided email exists in the
      * database
-     * @param email
-     * @return true if the email exists, false if it does not
      */
     public boolean emailAlreadyExists(String email){
         Optional<UserEntity> user = userRepository.findByEmail(email);
@@ -101,21 +99,14 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     /**
      * Sends a JWT to the user in case
-     * authentication is successful
-     * @param request the sign in request
+     * authentication is successful.
+     *
      * @return a JWT token if the user is authenticated,
      * throws an exception if the user is not found.
      *
      * When the exception is thrown, it is handled by
      * the Exception Handler method, which returns
-     * the object:
      *
-     * <br>
-     * <pre>
-     * {
-     *     "error": "Invalid username or password"
-     * }
-     * </pre>
      */
     public JwtAuthenticationResponse signIn(SignInRequest request){
         authManager.authenticate(new UsernamePasswordAuthenticationToken
@@ -137,8 +128,6 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     /**
      * Generates a JWT refresh token
-     * @param refreshTokenRequest
-     * @return a JWT refresh token
      */
     public JwtAuthenticationResponse generateRefreshToken(RefreshTokenRequest refreshTokenRequest){
         String userEmail = jwtService.extractUsername(refreshTokenRequest.getToken());

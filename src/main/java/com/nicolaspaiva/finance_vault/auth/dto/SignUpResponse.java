@@ -17,24 +17,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SignUpResponse {
 
-    boolean created;
+    private boolean created;
 
-    String message;
+    private String message;
 
     public SignUpResponse(boolean created, String message) {
         this.created = created;
         this.message = message;
     }
 
-    public SignUpResponse success(){
-        created = true;
-        message = "User created";
-        return this;
+    public static SignUpResponse success(){
+        return new SignUpResponse(true, "User created");
     }
 
-    public SignUpResponse failed(){
-        created = false;
-        message = "Failed to create user";
-        return this;
+    public static SignUpResponse failed(){
+        return new SignUpResponse(false, "Failed to create user");
     }
 }

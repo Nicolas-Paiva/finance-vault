@@ -2,7 +2,7 @@ package com.nicolaspaiva.finance_vault;
 
 import com.nicolaspaiva.finance_vault.user.entity.Role;
 import com.nicolaspaiva.finance_vault.user.entity.UserEntity;
-import com.nicolaspaiva.finance_vault.user.UserRepository;
+import com.nicolaspaiva.finance_vault.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

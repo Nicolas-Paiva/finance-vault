@@ -1,6 +1,6 @@
 package com.nicolaspaiva.finance_vault.user.service;
 
-import com.nicolaspaiva.finance_vault.user.UserRepository;
+import com.nicolaspaiva.finance_vault.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
