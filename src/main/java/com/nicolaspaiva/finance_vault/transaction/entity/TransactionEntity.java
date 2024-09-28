@@ -27,12 +27,12 @@ public class TransactionEntity {
     private Integer id;
 
     @JsonManagedReference
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "sender_account_id")
     private BankAccountEntity senderAccountId;
 
     @JsonManagedReference
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "receiver_account_id")
     private BankAccountEntity receiverAccountId;
 

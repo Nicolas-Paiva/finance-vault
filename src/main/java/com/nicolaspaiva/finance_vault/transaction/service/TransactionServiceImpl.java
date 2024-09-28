@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -33,15 +32,16 @@ public class TransactionServiceImpl implements TransactionService {
 
     /**
      * Process a transaction between two accounts
+     *
      * @param principal used to retrieve the user's account
      * @return different instances od the TransactionResponseDto,
      * which will vary based on the validity of the transaction
      */
-    public TransactionResponseDto processTransaction(Principal principal,
+    public TransactionResponseDto processTransaction(String email,
                                                      TransactionRequestDto transactionRequest){
 
         // Retrieves the sender's balance
-        Optional<BankAccountEntity> senderAcc = getAccountByEmail(principal.getName());
+        Optional<BankAccountEntity> senderAcc = getAccountByEmail(email);
 
         if(senderAcc.isEmpty()){
             throw new RuntimeException("Unexpected error");
@@ -62,7 +62,7 @@ public class TransactionServiceImpl implements TransactionService {
             return TransactionResponseDto.accountNotFound();
         }
 
-        if(isSelfTransaction(principal.getName(), transactionRequest.getDestinationEmail())){
+        if(isSelfTransaction(email, transactionRequest.getDestinationEmail())){
             return TransactionResponseDto.invalidTransaction();
         }
 
@@ -72,9 +72,6 @@ public class TransactionServiceImpl implements TransactionService {
         modifyFunds(receiverAcc.get(), senderAcc.get(), transactionRequest.getAmount());
 
         transactionRepository.save(transaction);
-
-        bankAccountRepository.save(receiverAcc.get());
-        bankAccountRepository.save(senderAcc.get());
 
         return TransactionResponseDto.transactionSuccessful();
     }
@@ -93,6 +90,21 @@ public class TransactionServiceImpl implements TransactionService {
                 .senderEmail(senderAcc.getOwnerEmail())
                 .amount(transactionRequest.getAmount())
                 .createdAt(LocalDateTime.now())
+                .build();
+    }
+
+    private TransactionEntity createFakeTransaction(TransactionRequestDto transactionRequest,
+                                                float amount,
+                                                BankAccountEntity receiverAcc,
+                                                BankAccountEntity senderAcc,
+                                                LocalDateTime time){
+        return TransactionEntity.builder()
+                .receiverAccountId(receiverAcc)
+                .senderAccountId(senderAcc)
+                .receiverEmail(receiverAcc.getOwnerEmail())
+                .senderEmail(senderAcc.getOwnerEmail())
+                .amount(amount)
+                .createdAt(time)
                 .build();
     }
 

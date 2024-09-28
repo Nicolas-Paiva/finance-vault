@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+/**
+ * Provides services related to the bank account
+ */
 @Service
 @RequiredArgsConstructor
 public class BankAccountServiceImpl implements BankAccountService{
@@ -15,7 +18,7 @@ public class BankAccountServiceImpl implements BankAccountService{
 
         return BankAccountEntity.builder()
                 .ownerEmail(user.getEmail())
-                .balance(100)
+                .balance(10000)
                 .build();
 
     }

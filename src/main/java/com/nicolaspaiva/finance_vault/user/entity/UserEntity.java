@@ -26,6 +26,8 @@ import java.util.List;
 @AllArgsConstructor
 public class UserEntity implements UserDetails {
 
+    // TODO: Annotate all entity fields with nullable and other important database configurations
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -42,6 +44,8 @@ public class UserEntity implements UserDetails {
     private Role role;
 
     private LocalDateTime createdAt;
+
+    private boolean isActive = false;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "bank_account_id")

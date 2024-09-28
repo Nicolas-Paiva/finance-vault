@@ -7,6 +7,6 @@ import java.security.Principal;
 
 public interface TransactionService {
 
-    TransactionResponseDto processTransaction(Principal principal, TransactionRequestDto paymentDto);
+    TransactionResponseDto processTransaction(String email, TransactionRequestDto paymentDto);
 
 }

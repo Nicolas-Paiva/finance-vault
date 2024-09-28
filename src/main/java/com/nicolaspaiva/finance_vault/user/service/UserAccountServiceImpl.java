@@ -9,10 +9,7 @@ import com.nicolaspaiva.finance_vault.user.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,16 +24,14 @@ public class UserAccountServiceImpl implements UserAccountService {
     // Transactional in order to allow Hibernate to fetch user transactions
     @Override
 //    @Transactional
-    public UserAccountDto getUserProfile(Principal principal) {
+    public UserAccountDto getUserProfile(String email) {
 
-        Optional<UserEntity> user = userRepository.findByEmail(principal.getName());
+        Optional<UserEntity> user = userRepository.findByEmail(email);
 
         // Handles cases where the user does not exist
         if(user.isEmpty()){
             throw new UserNotFoundException("User not found");
         }
-
-        // TODO: Sort the transactions according to when they were performed using the JPA repository methods
 
         List<TransactionDetailsDto> deposits = user.get().getAccount().getDeposits()
                 .stream().map(TransactionEntity::entityToTransactionDetails).collect(Collectors.toList());
@@ -56,4 +51,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                 .build();
     }
 
+    public void activateUser(UserEntity user){
+        user.setActive(true);
+    }
 }

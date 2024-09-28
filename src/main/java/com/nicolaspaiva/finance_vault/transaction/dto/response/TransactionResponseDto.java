@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
  * Represents the objects sent to the client
  * after performing a transaction.
  *
- * The transaction can either be successful or not
+ * The transaction can either be successful or not,
+ * depending on the email and amount provided
  */
 @NoArgsConstructor
 @AllArgsConstructor

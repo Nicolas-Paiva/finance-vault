@@ -21,24 +21,26 @@ public class TransactionController {
 
 
     /**
-     * Endpoint designed to send money to other bank accounts.
+     * Endpoint for transferring money between bank accounts.
      *
-     * In order to send an amount, the PaymentDto must be created,
-     * which consists of the email of the receiver account,
-     * as well as the amount to be sent.
+     * A valid TransactionRequestDto is required to initiate a transaction.
      *
-     * @param transactionDto The transaction object consists of
-     * the destination account's email as well as the
-     * amount to be sent
+     * This method processes the transaction and returns an appropriate response.
      *
+     * - If the transaction is successful, it returns a 201 (Created) status along with
+     *   the TransactionResponseDto indicating success.
      *
-     * @return a TransactionResponseDto,
-     * which can be successful or not
+     * - If the transaction fails due to invalid data or other reasons, a 400 (Bad Request) status
+     *   is returned along with the TransactionResponseDto describing the error.
+     *
+     * @param principal The currently authenticated user making the request.
+     * @param transactionDto The transaction details in the form of a TransactionRequestDto.
+     * @return ResponseEntity containing a TransactionResponseDto with the transaction result.
      */
     @RequestMapping("/transfer")
     public ResponseEntity<?> processTransfer(Principal principal, @RequestBody TransactionRequestDto transactionDto){
 
-        TransactionResponseDto response = transactionService.processTransaction(principal, transactionDto);
+        TransactionResponseDto response = transactionService.processTransaction(principal.getName(), transactionDto);
 
         if(response.isSuccess()){
             return new ResponseEntity<>(response, HttpStatus.CREATED);

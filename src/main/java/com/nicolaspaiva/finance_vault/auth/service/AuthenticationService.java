@@ -18,4 +18,7 @@ public interface AuthenticationService {
 
     // Generates a refresh token
     JwtAuthenticationResponse generateRefreshToken(RefreshTokenRequest refreshTokenRequest);
+
+    // TODO: Improve responses
+    String verifyToken(String token);
 }

@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Controller dedicated to providing
+ * information about the bank account
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/account")

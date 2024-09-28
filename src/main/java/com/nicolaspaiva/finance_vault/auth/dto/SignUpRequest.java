@@ -25,7 +25,7 @@ public class SignUpRequest {
     @NotBlank(message = "Last name should not be null")
     private String lastName;
 
-    @Email(message = "Invalid email address")
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$", message = "Invalid email address")
     private String email;
 
     // Ensures that the password contains at least 8 characters, one special character and one uppercase letter
