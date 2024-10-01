@@ -30,6 +30,10 @@ public class AuthenticationController {
 
     /**
      * Endpoint used for signing a user up.
+     *
+     * Upon signing up, a confirmation email
+     * is sent to the user in order to activate
+     * their account
      */
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpRequest signUpRequest){
@@ -59,8 +63,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/activate-account")
-    public String activateAccount(@RequestBody String token){
-        return authenticationService.verifyToken(token);
+    public ResponseEntity<?> activateAccount(@RequestBody String token){
+        return ResponseEntity.ok(authenticationService.verifyToken(token));
     }
 
 }

@@ -1,15 +1,15 @@
 package com.nicolaspaiva.finance_vault.auth.service;
 
+import com.nicolaspaiva.finance_vault.auth.confirmationtoken.dto.ConfirmationTokenResponse;
 import com.nicolaspaiva.finance_vault.auth.dto.*;
-import com.nicolaspaiva.finance_vault.auth.token.ConfirmationToken;
-import com.nicolaspaiva.finance_vault.auth.token.service.ConfirmationTokenService;
+import com.nicolaspaiva.finance_vault.auth.confirmationtoken.ConfirmationToken;
+import com.nicolaspaiva.finance_vault.auth.confirmationtoken.service.ConfirmationTokenService;
 import com.nicolaspaiva.finance_vault.bankaccount.entity.BankAccountEntity;
 import com.nicolaspaiva.finance_vault.bankaccount.service.BankAccountService;
-import com.nicolaspaiva.finance_vault.mail.EmailSender;
+import com.nicolaspaiva.finance_vault.email.EmailSender;
 import com.nicolaspaiva.finance_vault.security.jwt.JwtService;
 import com.nicolaspaiva.finance_vault.user.entity.Role;
 import com.nicolaspaiva.finance_vault.user.entity.UserEntity;
-import com.nicolaspaiva.finance_vault.user.repository.UserRepository;
 import com.nicolaspaiva.finance_vault.user.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +20,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.EOFException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
-import java.util.IllegalFormatCodePointException;
 import java.util.Optional;
-import java.util.UUID;
 
 
 @Service
@@ -35,7 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     private final PasswordEncoder passwordEncoder;
 
-    private final UserRepository userRepository;
+    private final UserAccountService userService;
 
     private final AuthenticationManager authManager;
 
@@ -49,20 +46,21 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     private final EmailSender emailSender;
 
+    // TODO: REFACTOR ALL CODE SINCE THE START OF THE EMAIL VALIDATION
+    // TODO: SEND VERIFICATION TOKEN IN THE EMAIL
+
     /**
-     * Registers a new user.<br>
-     *
+     * Registers a new user.
      * Password validation is
      * provided by Spring Validation.
      */
     public SignUpResponse signUp(SignUpRequest signUpRequest){
 
-        // Checks whether the provided email already exists
         if(emailAlreadyExists(signUpRequest.getEmail())){
             return new SignUpResponse(false, "Email already exists");
         }
 
-//        try{
+        try{
 
             UserEntity user = createUserEntity(signUpRequest);
 
@@ -70,63 +68,59 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
             user.setAccount(bankAccount);
 
+            String token = ConfirmationToken.generateTokenString();
+
+            ConfirmationToken confirmationToken =
+                    ConfirmationToken.buildUserConfirmationToken(user, token);
+
             String link = "http://localhost:8080/api/v1/auth/activate-account";
 
-            emailSender.sendEmail(user.getEmail(),
-                    buildEmail(user.getFirstName(), link));
+            emailSender.sendConfirmationEmail(user.getEmail(),
+                    buildEmail(user.getFirstName(), link, token));
 
 
-            userRepository.save(user);
-
-            // Generating the confirmation token
-            String token = UUID.randomUUID().toString();
-
-            ConfirmationToken confirmationToken = ConfirmationToken.builder()
-                    .token(token)
-                    .createdAt(LocalDateTime.now())
-                    .expiresAt(LocalDateTime.now().plusMinutes(15))
-                    .user(user)
-                    .build();
-
+            userService.saveUser(user);
             confirmationTokenService.saveConfirmationToken(confirmationToken);
-//
-//        } catch (Exception e){
-//            e.getLocalizedMessage();
-//            return SignUpResponse.failed();
-//        }
+
+        } catch (Exception e){
+            e.getLocalizedMessage();
+            return SignUpResponse.failed();
+        }
 
         return SignUpResponse.success();
     }
 
+
     @Override
     @Transactional
-    public String verifyToken(String token){
+    public ConfirmationTokenResponse verifyToken(String token){
+
         ConfirmationToken confirmationToken;
-        Optional<ConfirmationToken> confirmationTokenOp = confirmationTokenService.
+
+        Optional<ConfirmationToken> confirmationTokenOpt = confirmationTokenService.
                 getConfirmationToken(token);
 
-        // TODO: Improve responses when the token is not found
-        if(confirmationTokenOp.isEmpty()){
-            throw new IllegalMonitorStateException("Token does not exist");
+        if(confirmationTokenOpt.isEmpty()){
+            return ConfirmationTokenResponse.invalidToken();
         } else {
-            confirmationToken = confirmationTokenOp.get();
+            confirmationToken = confirmationTokenOpt.get();
         }
 
         if(confirmationToken.getConfirmedAt() != null){
-            throw new RuntimeException("Email has already been confirmed");
+            return ConfirmationTokenResponse.tokenAlreadyVerified();
         }
 
         if(confirmationToken.getExpiresAt().isBefore(LocalDateTime.now())){
-            throw new IllegalArgumentException("Token expired");
+            return ConfirmationTokenResponse.tokenExpired();
         }
 
         confirmationTokenService.setConfirmedAt(confirmationToken);
 
         userAccountService.activateUser(confirmationToken.getUser());
 
-        userRepository.save(confirmationToken.getUser());
+        userService.saveUser(confirmationToken.getUser());
 
-        return "Success";
+        return ConfirmationTokenResponse.tokenIsValid();
     }
 
 
@@ -150,9 +144,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
      * database
      */
     public boolean emailAlreadyExists(String email){
-        Optional<UserEntity> user = userRepository.findByEmail(email);
-
-        return user.isPresent();
+        return userService.findUserByEmail(email).isPresent();
     }
 
 
@@ -161,7 +153,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
      * authentication is successful.
      *
      * @return a JWT token if the user is authenticated,
-     * throws an exception if the user is not found.<br>
+     * throws an exception if the user is not found.
      *
      * When the exception is thrown, it is handled by
      * the Exception Handler method, which returns
@@ -169,10 +161,11 @@ public class AuthenticationServiceImpl implements AuthenticationService{
      *
      */
     public JwtAuthenticationResponse signIn(SignInRequest request){
+
         authManager.authenticate(new UsernamePasswordAuthenticationToken
                 (request.getEmail(), request.getPassword()));
 
-        var user = userRepository.findByEmail(request.getEmail())
+        var user = userService.findUserByEmail(request.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         var jwt = jwtService.generateToken(user);
@@ -191,7 +184,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
      */
     public JwtAuthenticationResponse generateRefreshToken(RefreshTokenRequest refreshTokenRequest){
         String userEmail = jwtService.extractUsername(refreshTokenRequest.getToken());
-        UserEntity user = userRepository.findByEmail(userEmail).orElseThrow();
+        UserEntity user = userService.findUserByEmail(userEmail).orElseThrow();
 
         if (jwtService.isTokenValid(refreshTokenRequest.getToken(), user)){
             var jwt = jwtService.generateToken(user);
@@ -205,7 +198,11 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         return null;
     }
 
-    private String buildEmail(String name, String link) {
+    /**
+     * Builds the email that is sent
+     * to the new registered user
+     */
+    private String buildEmail(String name, String link, String token) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +
                 "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +
@@ -261,7 +258,11 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
                 "      <td style=\"font-family:Helvetica,Arial,sans-serif;font-size:19px;line-height:1.315789474;max-width:560px\">\n" +
                 "        \n" +
-                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Activate Now</a> </p></blockquote>\n Link will expire in 15 minutes. <p>See you soon</p>" +
+                "            <p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\">Hi " + name + ",</p><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> Thank you for registering. Please click on the below link to activate your account: </p><blockquote style=\"Margin:0 0 20px 0;border-left:10px solid #b1b4b6;padding:15px 0 0.1px 15px;font-size:19px;line-height:25px\"><p style=\"Margin:0 0 20px 0;font-size:19px;line-height:25px;color:#0b0c0c\"> <a href=\"" + link + "\">Activate Now</a> </p></blockquote>\n" +
+                "            <p>Link will expire in 15 minutes.</p>" +
+                "            <p>Here's your verification token: <strong>" + token + "</strong></p>" +
+                "            <p>If the link does not work, you can enter this token manually in the app.</p>" +
+                "            <p>See you soon</p>" +
                 "        \n" +
                 "      </td>\n" +
                 "      <td width=\"10\" valign=\"middle\"><br></td>\n" +
@@ -273,4 +274,5 @@ public class AuthenticationServiceImpl implements AuthenticationService{
                 "\n" +
                 "</div></div>";
     }
+
 }

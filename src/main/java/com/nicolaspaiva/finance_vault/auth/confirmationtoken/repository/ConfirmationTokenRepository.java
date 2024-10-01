@@ -1,6 +1,6 @@
-package com.nicolaspaiva.finance_vault.auth.token.repository;
+package com.nicolaspaiva.finance_vault.auth.confirmationtoken.repository;
 
-import com.nicolaspaiva.finance_vault.auth.token.ConfirmationToken;
+import com.nicolaspaiva.finance_vault.auth.confirmationtoken.ConfirmationToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

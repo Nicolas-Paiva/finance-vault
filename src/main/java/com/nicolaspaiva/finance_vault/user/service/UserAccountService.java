@@ -4,6 +4,7 @@ import com.nicolaspaiva.finance_vault.user.dto.UserAccountDto;
 import com.nicolaspaiva.finance_vault.user.entity.UserEntity;
 
 import java.security.Principal;
+import java.util.Optional;
 
 public interface UserAccountService {
 
@@ -12,4 +13,10 @@ public interface UserAccountService {
     UserAccountDto getUserProfile(String email);
 
     void activateUser(UserEntity user);
+
+    void saveUser(UserEntity user);
+
+    Optional<UserEntity> findUserByEmail(String email);
+
+    int getUserIdByEmail(String email);
 }

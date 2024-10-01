@@ -1,4 +1,4 @@
-package com.nicolaspaiva.finance_vault.mail;
+package com.nicolaspaiva.finance_vault.email;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -21,30 +21,28 @@ public class EmailSenderImpl implements EmailSender{
     private String from;
 
     @Async
-    public void sendEmail(String to, String email){
+    public void sendConfirmationEmail(String to, String email){
         try{
 
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
 
-            helper.setText(email, true);
+            buildConfirmationEmail(helper, email, to);
 
-            helper.setTo(to);
-
-            helper.setSubject("Confirmation Email - Finance Vault");
-
-            helper.setFrom("nicolaspaiva@outlook.com");
-
-            log.info("Mail Send?????");
-
-            javaMailSender.send(mimeMessage);
-
-            log.info("Mail Send?????");
+//            javaMailSender.send(mimeMessage);
 
         } catch (MessagingException e){
             log.error("Failed to send email", e);
             throw new IllegalStateException("Failed to send email");
         }
+    }
+
+    private void buildConfirmationEmail(MimeMessageHelper messageHelper, String email, String to)
+            throws MessagingException {
+        messageHelper.setText(email, true);
+        messageHelper.setTo(to);
+        messageHelper.setSubject("Confirm your email - Finance Vault");
+        messageHelper.setFrom("nicolaspaiva@outlook.com");
     }
 }

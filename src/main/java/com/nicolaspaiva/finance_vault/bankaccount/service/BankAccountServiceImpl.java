@@ -7,12 +7,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
-/**
- * Provides services related to the bank account
- */
 @Service
 @RequiredArgsConstructor
 public class BankAccountServiceImpl implements BankAccountService{
+
 
     public BankAccountEntity createBankAccount(UserEntity user){
 

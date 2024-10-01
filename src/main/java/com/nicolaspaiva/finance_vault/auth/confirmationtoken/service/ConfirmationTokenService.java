@@ -1,7 +1,7 @@
-package com.nicolaspaiva.finance_vault.auth.token.service;
+package com.nicolaspaiva.finance_vault.auth.confirmationtoken.service;
 
 
-import com.nicolaspaiva.finance_vault.auth.token.ConfirmationToken;
+import com.nicolaspaiva.finance_vault.auth.confirmationtoken.ConfirmationToken;
 
 import java.util.Optional;
 

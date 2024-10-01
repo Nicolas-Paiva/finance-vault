@@ -1,7 +1,7 @@
-package com.nicolaspaiva.finance_vault.auth.token.service;
+package com.nicolaspaiva.finance_vault.auth.confirmationtoken.service;
 
-import com.nicolaspaiva.finance_vault.auth.token.ConfirmationToken;
-import com.nicolaspaiva.finance_vault.auth.token.repository.ConfirmationTokenRepository;
+import com.nicolaspaiva.finance_vault.auth.confirmationtoken.ConfirmationToken;
+import com.nicolaspaiva.finance_vault.auth.confirmationtoken.repository.ConfirmationTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +13,8 @@ import java.util.Optional;
 public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
 
     private final ConfirmationTokenRepository confirmationTokenRepository;
+
+    // TODO: Create token deletion method to clear up used and expired tokens after 24h
 
     @Override
     public void saveConfirmationToken(ConfirmationToken token) {

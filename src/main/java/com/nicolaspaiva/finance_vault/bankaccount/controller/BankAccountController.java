@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/account")
 public class BankAccountController {
 
-    // TODO: Create account creation service
-
     private final BankAccountService bankAccountService;
 
     @PostMapping("/create")

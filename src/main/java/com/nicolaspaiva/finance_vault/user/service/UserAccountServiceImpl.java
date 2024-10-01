@@ -1,5 +1,7 @@
 package com.nicolaspaiva.finance_vault.user.service;
 
+import com.nicolaspaiva.finance_vault.bankaccount.entity.BankAccountEntity;
+import com.nicolaspaiva.finance_vault.bankaccount.repository.BankAccountRepository;
 import com.nicolaspaiva.finance_vault.exception.UserNotFoundException;
 import com.nicolaspaiva.finance_vault.transaction.dto.response.TransactionDetailsDto;
 import com.nicolaspaiva.finance_vault.transaction.entity.TransactionEntity;
@@ -21,9 +23,9 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     private final UserRepository userRepository;
 
-    // Transactional in order to allow Hibernate to fetch user transactions
+    private final BankAccountRepository bankAccountRepository;
+
     @Override
-//    @Transactional
     public UserAccountDto getUserProfile(String email) {
 
         Optional<UserEntity> user = userRepository.findByEmail(email);
@@ -41,7 +43,6 @@ public class UserAccountServiceImpl implements UserAccountService {
 
         withdrawals.forEach(withdrawal -> withdrawal.setAmount(withdrawal.getAmount() * -1));
 
-        // Maybe modify this?
         return UserAccountDto.builder()
                 .firstName(user.get().getFirstName())
                 .lastName(user.get().getLastName())
@@ -51,7 +52,31 @@ public class UserAccountServiceImpl implements UserAccountService {
                 .build();
     }
 
+
     public void activateUser(UserEntity user){
         user.setActive(true);
+    }
+
+
+    public void saveUser(UserEntity user){
+        userRepository.save(user);
+    }
+
+
+    public Optional<UserEntity> findUserByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
+
+
+    public int getUserIdByEmail(String email){
+
+        Optional<BankAccountEntity> account =
+                bankAccountRepository.findBankAccountEntityByOwnerEmail(email);
+
+        if(account.isEmpty()){
+            throw new RuntimeException("User does not exist");
+        }
+
+        return account.get().getId();
     }
 }
