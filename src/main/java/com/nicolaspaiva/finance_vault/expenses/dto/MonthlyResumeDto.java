@@ -5,6 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents the monthly resume
+ * sent to the client, containing
+ * the total expenses, the deposits
+ * and the monthly balance
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

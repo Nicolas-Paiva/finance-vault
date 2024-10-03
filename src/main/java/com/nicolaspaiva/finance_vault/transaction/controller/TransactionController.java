@@ -25,17 +25,11 @@ public class TransactionController {
      *
      * A valid TransactionRequestDto is required to initiate a transaction.
      *
-     * This method processes the transaction and returns an appropriate response.
+     * If the transaction is successful, it returns a 201 (Created) status along with
+     * the TransactionResponseDto indicating success.
      *
-     * - If the transaction is successful, it returns a 201 (Created) status along with
-     *   the TransactionResponseDto indicating success.
-     *
-     * - If the transaction fails due to invalid data or other reasons, a 400 (Bad Request) status
-     *   is returned along with the TransactionResponseDto describing the error.
-     *
-     * @param principal The currently authenticated user making the request.
-     * @param transactionDto The transaction details in the form of a TransactionRequestDto.
-     * @return ResponseEntity containing a TransactionResponseDto with the transaction result.
+     * If the transaction fails due to invalid data or other reasons, a 400 (Bad Request) status
+     * is returned along with the TransactionResponseDto describing the error.
      */
     @RequestMapping("/transfer")
     public ResponseEntity<?> processTransfer(Principal principal, @RequestBody TransactionRequestDto transactionDto){

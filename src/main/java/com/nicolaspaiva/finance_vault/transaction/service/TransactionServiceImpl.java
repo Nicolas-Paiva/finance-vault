@@ -5,12 +5,17 @@ import com.nicolaspaiva.finance_vault.bankaccount.repository.BankAccountReposito
 import com.nicolaspaiva.finance_vault.transaction.dto.request.TransactionRequestDto;
 import com.nicolaspaiva.finance_vault.transaction.dto.response.TransactionResponseDto;
 import com.nicolaspaiva.finance_vault.transaction.entity.TransactionEntity;
+import com.nicolaspaiva.finance_vault.transaction.entity.TransactionType;
 import com.nicolaspaiva.finance_vault.transaction.repository.TransactionRepository;
+import com.nicolaspaiva.finance_vault.user.service.UserAccountService;
+import com.nicolaspaiva.finance_vault.utils.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -25,7 +30,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
 
-    private final BankAccountRepository bankAccountRepository;
+    private final UserAccountService userAccountService;
 
 
     // TODO: Implement transfer fee for some transfers
@@ -33,9 +38,9 @@ public class TransactionServiceImpl implements TransactionService {
     /**
      * Process a transaction between two accounts
      *
-     * @param principal used to retrieve the user's account
-     * @return different instances od the TransactionResponseDto,
-     * which will vary based on the validity of the transaction
+     * The method returns different instances of
+     * the TransactionResponseDto based on the
+     * status of the transaction.
      */
     public TransactionResponseDto processTransaction(String email,
                                                      TransactionRequestDto transactionRequest){
@@ -78,6 +83,47 @@ public class TransactionServiceImpl implements TransactionService {
 
 
     /**
+     * Returns a list with either withdrawals
+     * or deposits
+     */
+    public List<Float> getUserMonthlyTransactionValuesByEmail(String email, TransactionType transactionType){
+
+        int userId = userAccountService.getUserIdByEmail(email);
+
+        LocalDateTime firstDayOfTheMonth = DateUtils.getFirstDayOfTheMonth();
+
+        List<TransactionEntity> transactionEntities;
+
+        // Retrieves transaction entities
+        if(transactionType.equals(TransactionType.WITHDRAWAL)){
+            transactionEntities = transactionRepository.findWithdrawalsByIdAndDateRange
+                    (userId, firstDayOfTheMonth, LocalDateTime.now());
+        } else {
+            transactionEntities = transactionRepository.findDepositsByIdAndDateRange
+                    (userId, firstDayOfTheMonth, LocalDateTime.now());
+        }
+
+        return getAllTransactionValues(transactionEntities);
+    }
+
+
+    /**
+     * Returns a list with all the values
+     * of the transaction in the
+     * transaction entities
+     */
+    private List<Float> getAllTransactionValues(List<TransactionEntity> transactionEntities){
+        List<Float> values = new ArrayList<>();
+
+        for(TransactionEntity transactionEntity : transactionEntities){
+            values.add(transactionEntity.getAmount());
+        }
+
+        return values;
+    }
+
+
+    /**
      * Creates a transaction entity based on a transaction request
      */
     private TransactionEntity createTransaction(TransactionRequestDto transactionRequest,
@@ -90,21 +136,6 @@ public class TransactionServiceImpl implements TransactionService {
                 .senderEmail(senderAcc.getOwnerEmail())
                 .amount(transactionRequest.getAmount())
                 .createdAt(LocalDateTime.now())
-                .build();
-    }
-
-    private TransactionEntity createFakeTransaction(TransactionRequestDto transactionRequest,
-                                                float amount,
-                                                BankAccountEntity receiverAcc,
-                                                BankAccountEntity senderAcc,
-                                                LocalDateTime time){
-        return TransactionEntity.builder()
-                .receiverAccountId(receiverAcc)
-                .senderAccountId(senderAcc)
-                .receiverEmail(receiverAcc.getOwnerEmail())
-                .senderEmail(senderAcc.getOwnerEmail())
-                .amount(amount)
-                .createdAt(time)
                 .build();
     }
 
@@ -140,7 +171,7 @@ public class TransactionServiceImpl implements TransactionService {
      * Retrieves an account based on the provided email
      */
     private Optional<BankAccountEntity> getAccountByEmail(String email){
-        return bankAccountRepository.findBankAccountEntityByOwnerEmail(email);
+        return userAccountService.getBankAccountByEmail(email);
     }
 
 

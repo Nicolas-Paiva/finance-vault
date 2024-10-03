@@ -25,6 +25,11 @@ public class UserAccountServiceImpl implements UserAccountService {
 
     private final BankAccountRepository bankAccountRepository;
 
+    /**
+     * Retrieves the user profile,
+     * which contains the information
+     * displayed in the user's home page
+     */
     @Override
     public UserAccountDto getUserProfile(String email) {
 
@@ -78,5 +83,9 @@ public class UserAccountServiceImpl implements UserAccountService {
         }
 
         return account.get().getId();
+    }
+
+    public Optional<BankAccountEntity> getBankAccountByEmail(String email){
+        return bankAccountRepository.findBankAccountEntityByOwnerEmail(email);
     }
 }

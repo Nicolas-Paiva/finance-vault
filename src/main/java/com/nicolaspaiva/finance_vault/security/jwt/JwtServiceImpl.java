@@ -18,10 +18,9 @@ import java.util.function.Function;
 @Service
 public class JwtServiceImpl implements JwtService{
 
+
     /**
-     * Generates a JWT based on the user
-     * @param userDetails the user details object
-     * @return a JWT
+     * Generates a JWT based on the UserDetails object
      */
     @Override
     public String generateToken(UserDetails userDetails){
@@ -40,12 +39,6 @@ public class JwtServiceImpl implements JwtService{
     }
 
 
-    /**
-     * Generates a JWT refresh token
-     * @param extraClaims
-     * @param userDetails the user the token should be created for
-     * @return a new JWT with extended expiration date
-     */
     @Override
     public String generateRefreshToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts.builder()
@@ -72,7 +65,6 @@ public class JwtServiceImpl implements JwtService{
 
     /**
      * Extracts a specific claim from a JWT
-     * @param token the JWT
      * @param claimsResolver a function used to extract a specific claim
      * @return the specified claim
      */
@@ -84,8 +76,6 @@ public class JwtServiceImpl implements JwtService{
 
     /**
      * Extracts all the claims from the JWT
-     * @param token the JWT
-     * @return all the claims from the JWT
      */
     private Claims extractAllClaims(String token){
         return Jwts.parser().verifyWith(getSigningKey()).build()
@@ -95,8 +85,6 @@ public class JwtServiceImpl implements JwtService{
 
     /**
      * Extracts the username (email) from the JWT
-     * @param token the JWT
-     * @return returns the email stored in the JWT
      */
     @Override
     public String extractUsername(String token){
@@ -104,11 +92,6 @@ public class JwtServiceImpl implements JwtService{
     }
 
 
-    /**
-     * Verifies whether the JWT is expired
-     * @param token
-     * @return true if the token is expired, false otherwise
-     */
     private boolean isTokenExpired(String token){
         return extractClaim(token, Claims::getExpiration).before(new Date());
     }
@@ -117,10 +100,7 @@ public class JwtServiceImpl implements JwtService{
     /**
      * Verifies whether the JWT token is valid,
      * checking the username and the expiration
-     * in the token
-     * @param token the JWT
-     * @param userDetails the user to be compared against the token
-     * @return true if the token is valid, false if not
+     * date in the token
      */
     @Override
     public boolean isTokenValid(String token, UserDetails userDetails){

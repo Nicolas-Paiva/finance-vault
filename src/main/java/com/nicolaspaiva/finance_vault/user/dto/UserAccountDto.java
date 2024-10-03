@@ -1,7 +1,6 @@
 package com.nicolaspaiva.finance_vault.user.dto;
 
 import com.nicolaspaiva.finance_vault.transaction.dto.response.TransactionDetailsDto;
-import com.nicolaspaiva.finance_vault.transaction.entity.TransactionEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

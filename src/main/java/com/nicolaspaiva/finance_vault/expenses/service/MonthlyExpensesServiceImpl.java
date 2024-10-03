@@ -1,33 +1,31 @@
 package com.nicolaspaiva.finance_vault.expenses.service;
 
-import com.nicolaspaiva.finance_vault.bankaccount.repository.BankAccountRepository;
 import com.nicolaspaiva.finance_vault.expenses.dto.MonthlyResumeDto;
-import com.nicolaspaiva.finance_vault.expenses.dto.TransactionType;
-import com.nicolaspaiva.finance_vault.transaction.entity.TransactionEntity;
-import com.nicolaspaiva.finance_vault.transaction.repository.TransactionRepository;
-import com.nicolaspaiva.finance_vault.user.service.UserAccountService;
+import com.nicolaspaiva.finance_vault.transaction.entity.TransactionType;
+import com.nicolaspaiva.finance_vault.transaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MonthlyExpensesServiceImpl implements MonthlyExpensesService{
 
-    private final TransactionRepository transactionRepository;
-
-    private final UserAccountService userAccountService;
+    private final TransactionService transactionService;
 
 
+    /**
+     * Calculates the monthly expenses and the
+     * balance, returning a MonthlyResumoDto
+     * to the client
+     */
     @Override
     public MonthlyResumeDto getMonthlyExpensesAndBalance(String email){
 
-        List<Float> expenses = getUserMonthlyTransactionsByEmail(email, TransactionType.WITHDRAWAL);
+        List<Float> expenses = transactionService.getUserMonthlyTransactionValuesByEmail(email, TransactionType.WITHDRAWAL);
 
-         List<Float> deposits = getUserMonthlyTransactionsByEmail(email, TransactionType.DEPOSIT);
+         List<Float> deposits = transactionService.getUserMonthlyTransactionValuesByEmail(email, TransactionType.DEPOSIT);
 
         float totalExpenses = sumTransactions(expenses);
 
@@ -40,47 +38,8 @@ public class MonthlyExpensesServiceImpl implements MonthlyExpensesService{
                 .build();
     }
 
-    /**
-     * Returns a list with either withdrawals
-     * or deposits
-     */
-    private List<Float> getUserMonthlyTransactionsByEmail(String email, TransactionType transactionType){
 
-        int userId = userAccountService.getUserIdByEmail(email);
-
-        LocalDateTime firstDayOfTheMonth = getFirstDayOfTheMonth();
-
-        List<TransactionEntity> transactionEntities;
-
-
-        if(transactionType.equals(TransactionType.WITHDRAWAL)){
-             transactionEntities = transactionRepository.findWithdrawalsByIdAndDateRange
-                            (userId, firstDayOfTheMonth, LocalDateTime.now());
-        } else {
-            transactionEntities = transactionRepository.findDepositsByIdAndDateRange
-                    (userId, firstDayOfTheMonth, LocalDateTime.now());
-        }
-
-        return getAllTransactionValues(transactionEntities);
-    }
-
-
-    private LocalDateTime getFirstDayOfTheMonth(){
-        return LocalDateTime.now().withDayOfMonth(1);
-    }
-
-
-    private List<Float> getAllTransactionValues(List<TransactionEntity> transactionEntities){
-        List<Float> values = new ArrayList<>();
-
-        for(TransactionEntity transactionEntity : transactionEntities){
-            values.add(transactionEntity.getAmount());
-        }
-
-        return values;
-    }
-
-
+    // TODO: Implement averages for long term comparison
     private float calculateAverage(List<Float> values){
         return sumTransactions(values) / values.size();
     }

@@ -30,7 +30,7 @@ public class EmailSenderImpl implements EmailSender{
 
             buildConfirmationEmail(helper, email, to);
 
-//            javaMailSender.send(mimeMessage);
+            // javaMailSender.send(mimeMessage);
 
         } catch (MessagingException e){
             log.error("Failed to send email", e);

@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-/*
-Represents the transaction details
-that the user should be able to see
-in the UI. Used when the user retrieves
-previous transactions
-*/
+/**
+ * Represents the transaction details
+ * that the user should be able to see
+ * in the UI.
+ *
+ * Used when the user retrieves
+ * previous transactions
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

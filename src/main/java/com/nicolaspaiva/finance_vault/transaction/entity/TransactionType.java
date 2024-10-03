@@ -1,4 +1,4 @@
-package com.nicolaspaiva.finance_vault.expenses.dto;
+package com.nicolaspaiva.finance_vault.transaction.entity;
 
 public enum TransactionType {
     WITHDRAWAL,
