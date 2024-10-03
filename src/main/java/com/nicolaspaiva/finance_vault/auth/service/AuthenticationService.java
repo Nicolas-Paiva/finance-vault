@@ -14,12 +14,9 @@ public interface AuthenticationService {
 
 
     // Signs a user in
-    JwtAuthenticationResponse signIn(SignInRequest request);
+    SignInResponse signIn(SignInRequest request);
 
 
     // Generates a refresh token
-    JwtAuthenticationResponse generateRefreshToken(RefreshTokenRequest refreshTokenRequest);
-
-    // Verifies a ConfirmationToken
-    ConfirmationTokenResponse verifyToken(String token);
+    // JwtAuthenticationResponse generateRefreshToken(RefreshTokenRequest refreshTokenRequest);
 }

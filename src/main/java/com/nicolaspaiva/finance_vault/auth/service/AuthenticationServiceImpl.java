@@ -1,8 +1,7 @@
 package com.nicolaspaiva.finance_vault.auth.service;
 
-import com.nicolaspaiva.finance_vault.auth.confirmationtoken.dto.ConfirmationTokenResponse;
 import com.nicolaspaiva.finance_vault.auth.dto.*;
-import com.nicolaspaiva.finance_vault.auth.confirmationtoken.ConfirmationToken;
+import com.nicolaspaiva.finance_vault.auth.confirmationtoken.ConfirmationTokenEntity;
 import com.nicolaspaiva.finance_vault.auth.confirmationtoken.service.ConfirmationTokenService;
 import com.nicolaspaiva.finance_vault.bankaccount.entity.BankAccountEntity;
 import com.nicolaspaiva.finance_vault.bankaccount.service.BankAccountService;
@@ -15,10 +14,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -63,18 +62,18 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
             user.setAccount(bankAccount);
 
-            String token = ConfirmationToken.generateTokenString();
+            String token = ConfirmationTokenEntity.generateTokenString();
 
-            ConfirmationToken confirmationToken =
-                    ConfirmationToken.buildUserConfirmationToken(user, token);
+            ConfirmationTokenEntity confirmationToken =
+                    ConfirmationTokenEntity.buildUserConfirmationToken(user, token);
 
             String link = "http://localhost:8080/api/v1/auth/activate-account";
 
             emailSender.sendConfirmationEmail(user.getEmail(),
                     buildEmail(user.getFirstName(), link, token));
 
-
             userService.saveUser(user);
+
             confirmationTokenService.saveConfirmationToken(confirmationToken);
 
         } catch (Exception e){
@@ -83,39 +82,6 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         }
 
         return SignUpResponse.success();
-    }
-
-
-    @Override
-    @Transactional
-    public ConfirmationTokenResponse verifyToken(String token){
-
-        ConfirmationToken confirmationToken;
-
-        Optional<ConfirmationToken> confirmationTokenOpt = confirmationTokenService.
-                getConfirmationToken(token);
-
-        if(confirmationTokenOpt.isEmpty()){
-            return ConfirmationTokenResponse.invalidToken();
-        } else {
-            confirmationToken = confirmationTokenOpt.get();
-        }
-
-        if(confirmationToken.getConfirmedAt() != null){
-            return ConfirmationTokenResponse.tokenAlreadyVerified();
-        }
-
-        if(confirmationToken.getExpiresAt().isBefore(LocalDateTime.now())){
-            return ConfirmationTokenResponse.tokenExpired();
-        }
-
-        confirmationTokenService.setConfirmedAt(confirmationToken);
-
-        userService.activateUser(confirmationToken.getUser());
-
-        userService.saveUser(confirmationToken.getUser());
-
-        return ConfirmationTokenResponse.tokenIsValid();
     }
 
 
@@ -147,51 +113,36 @@ public class AuthenticationServiceImpl implements AuthenticationService{
      * Sends a JWT to the user in case
      * authentication is successful.
      *
-     * @return a JWT token if the user is authenticated,
-     * throws an exception if the user is not found.
-     *
-     * When the exception is thrown, it is handled by
-     * the Exception Handler method, which returns
-     * a UserNotFoundException object
+     * if the user is not found or is
+     * inactive, the JWT is not sent,
+     * and an error message is sent
+     * to the client
      *
      */
-    public JwtAuthenticationResponse signIn(SignInRequest request){
+    public SignInResponse signIn(SignInRequest request){
 
         authManager.authenticate(new UsernamePasswordAuthenticationToken
                 (request.getEmail(), request.getPassword()));
 
-        var user = userService.findUserByEmail(request.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        UserEntity user;
+
+        Optional<UserEntity> userOpt = userService.findUserByEmail(request.getEmail());
+
+        if(userOpt.isEmpty()){
+            return SignInResponse.userDoesNotExist();
+        } else {
+            user = userOpt.get();
+        }
+
+        if(!user.isActive()){
+            return SignInResponse.userIsInactive();
+        }
 
         var jwt = jwtService.generateToken(user);
 
-        var refreshToken = jwtService.generateRefreshToken(new HashMap<>(), user);
-
-        return JwtAuthenticationResponse.builder()
-                .token(jwt)
-                .refreshToken(refreshToken)
-                .build();
+        return SignInResponse.success(jwt);
     }
 
-
-    /**
-     * Generates a JWT refresh token
-     */
-    public JwtAuthenticationResponse generateRefreshToken(RefreshTokenRequest refreshTokenRequest){
-        String userEmail = jwtService.extractUsername(refreshTokenRequest.getToken());
-        UserEntity user = userService.findUserByEmail(userEmail).orElseThrow();
-
-        if (jwtService.isTokenValid(refreshTokenRequest.getToken(), user)){
-            var jwt = jwtService.generateToken(user);
-
-            return JwtAuthenticationResponse.builder()
-                    .token(jwt)
-                    .refreshToken(refreshTokenRequest.getToken())
-                    .build();
-        }
-
-        return null;
-    }
 
     /**
      * Builds the email that is sent

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/admin")
 public class AdminController {
 
+    // TODO: Create admin functionality
+
     @GetMapping("/hello")
     public ResponseEntity<?> helloAdmin(){
         return ResponseEntity.ok("You are an admin");

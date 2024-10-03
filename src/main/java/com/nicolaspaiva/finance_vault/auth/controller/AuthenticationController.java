@@ -1,9 +1,9 @@
 package com.nicolaspaiva.finance_vault.auth.controller;
 
-import com.nicolaspaiva.finance_vault.auth.dto.RefreshTokenRequest;
-import com.nicolaspaiva.finance_vault.auth.dto.SignInRequest;
-import com.nicolaspaiva.finance_vault.auth.dto.SignUpRequest;
-import com.nicolaspaiva.finance_vault.auth.dto.SignUpResponse;
+import com.nicolaspaiva.finance_vault.auth.confirmationtoken.dto.ConfirmationTokenRequest;
+import com.nicolaspaiva.finance_vault.auth.confirmationtoken.dto.ConfirmationTokenResponse;
+import com.nicolaspaiva.finance_vault.auth.confirmationtoken.service.ConfirmationTokenService;
+import com.nicolaspaiva.finance_vault.auth.dto.*;
 import com.nicolaspaiva.finance_vault.auth.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
+
+    private final ConfirmationTokenService confirmationTokenService;
 
     /**
      * Endpoint used for signing a user up.
@@ -54,17 +56,26 @@ public class AuthenticationController {
      */
     @PostMapping("/sign-in")
     public ResponseEntity<?> signIn(@RequestBody SignInRequest signInRequest){
-        return ResponseEntity.ok(authenticationService.signIn(signInRequest));
+        SignInResponse signInResponse = authenticationService.signIn(signInRequest);
+
+        if(signInResponse.isSuccess()){
+            return new ResponseEntity<>(signInResponse, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(signInResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest){
-        return ResponseEntity.ok(authenticationService.generateRefreshToken(refreshTokenRequest));
-    }
 
     @PostMapping("/activate-account")
-    public ResponseEntity<?> activateAccount(@RequestBody String token){
-        return ResponseEntity.ok(authenticationService.verifyToken(token));
+    public ResponseEntity<?> activateAccount(@RequestBody ConfirmationTokenRequest token){
+        ConfirmationTokenResponse confirmationTokenResponse =
+                confirmationTokenService.verifyToken(token.getConfirmationToken());
+
+        if(confirmationTokenResponse.isSuccess()){
+            return ResponseEntity.ok(confirmationTokenResponse);
+        }
+
+        return new ResponseEntity<>(confirmationTokenResponse, HttpStatus.BAD_REQUEST);
     }
 
 }

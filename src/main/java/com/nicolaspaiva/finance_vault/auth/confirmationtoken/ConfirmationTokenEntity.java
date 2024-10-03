@@ -14,12 +14,12 @@ import java.util.UUID;
  * Confirmation token that is stored in
  * the database for activating a user account
  */
-@Entity
+@Entity(name = "confirmation_token")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ConfirmationToken {
+public class ConfirmationTokenEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,8 +37,8 @@ public class ConfirmationToken {
     @JoinColumn(nullable = false)
     private UserEntity user;
 
-    public static ConfirmationToken buildUserConfirmationToken(UserEntity user, String token){
-        return ConfirmationToken.builder()
+    public static ConfirmationTokenEntity buildUserConfirmationToken(UserEntity user, String token){
+        return ConfirmationTokenEntity.builder()
                 .token(token)
                 .createdAt(LocalDateTime.now())
                 .expiresAt(LocalDateTime.now().plusMinutes(15))

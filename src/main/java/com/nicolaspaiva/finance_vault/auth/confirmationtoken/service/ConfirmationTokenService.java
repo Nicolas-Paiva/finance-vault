@@ -1,16 +1,19 @@
 package com.nicolaspaiva.finance_vault.auth.confirmationtoken.service;
 
 
-import com.nicolaspaiva.finance_vault.auth.confirmationtoken.ConfirmationToken;
+import com.nicolaspaiva.finance_vault.auth.confirmationtoken.ConfirmationTokenEntity;
+import com.nicolaspaiva.finance_vault.auth.confirmationtoken.dto.ConfirmationTokenResponse;
 
 import java.util.Optional;
 
 public interface ConfirmationTokenService {
 
-    void saveConfirmationToken(ConfirmationToken token);
+    void saveConfirmationToken(ConfirmationTokenEntity token);
 
-    Optional<ConfirmationToken> getConfirmationToken(String token);
+    Optional<ConfirmationTokenEntity> getConfirmationToken(String token);
 
-    void setConfirmedAt(ConfirmationToken token);
+    void setConfirmedAt(ConfirmationTokenEntity token);
+
+    ConfirmationTokenResponse verifyToken(String token);
 
 }
