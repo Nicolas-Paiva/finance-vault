@@ -30,7 +30,6 @@ public class UserController {
     }
 
 
-    // TODO: Currently under development
     @GetMapping("/account/monthly-expenses")
     public ResponseEntity<?> getMonthlyExpenses(Principal principal){
         return new ResponseEntity<>(monthlyExpensesService.getMonthlyExpensesAndBalance(principal.getName()),

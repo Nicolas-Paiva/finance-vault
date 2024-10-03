@@ -42,12 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     private final ConfirmationTokenService confirmationTokenService;
 
-    private final UserAccountService userAccountService;
-
     private final EmailSender emailSender;
-
-    // TODO: REFACTOR ALL CODE SINCE THE START OF THE EMAIL VALIDATION
-    // TODO: SEND VERIFICATION TOKEN IN THE EMAIL
 
     /**
      * Registers a new user.
@@ -116,7 +111,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
         confirmationTokenService.setConfirmedAt(confirmationToken);
 
-        userAccountService.activateUser(confirmationToken.getUser());
+        userService.activateUser(confirmationToken.getUser());
 
         userService.saveUser(confirmationToken.getUser());
 
