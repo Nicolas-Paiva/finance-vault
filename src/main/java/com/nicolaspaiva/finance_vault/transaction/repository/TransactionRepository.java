@@ -25,4 +25,13 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
     List<TransactionEntity> findDepositsByIdAndDateRange(@Param("accountId") Integer accountId,
                                                             @Param("startDate") LocalDateTime startDate,
                                                             @Param("endDate") LocalDateTime endDate);
+
+
+    @Query("SELECT t FROM TransactionEntity t " +
+    "WHERE t.createdAt BETWEEN :today AND :beginningOfTheMonth")
+    List<TransactionEntity> getMonthlyTransactions
+            (@Param("today") LocalDateTime beginningOfTheMonth,
+             @Param("beginningOfTheMonth") LocalDateTime today);
+
+
 }

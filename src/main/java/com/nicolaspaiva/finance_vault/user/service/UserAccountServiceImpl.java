@@ -5,6 +5,7 @@ import com.nicolaspaiva.finance_vault.bankaccount.repository.BankAccountReposito
 import com.nicolaspaiva.finance_vault.exception.UserNotFoundException;
 import com.nicolaspaiva.finance_vault.transaction.dto.response.TransactionDetailsDto;
 import com.nicolaspaiva.finance_vault.transaction.entity.TransactionEntity;
+import com.nicolaspaiva.finance_vault.transaction.entity.TransactionType;
 import com.nicolaspaiva.finance_vault.user.repository.UserRepository;
 import com.nicolaspaiva.finance_vault.user.dto.UserAccountDto;
 import com.nicolaspaiva.finance_vault.user.entity.UserEntity;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,28 +33,50 @@ public class UserAccountServiceImpl implements UserAccountService {
     @Override
     public UserAccountDto getUserProfile(String email) {
 
-        Optional<UserEntity> user = userRepository.findByEmail(email);
+        UserEntity user;
+        Optional<UserEntity> userOpt = userRepository.findByEmail(email);
 
         // Handles cases where the user does not exist
-        if(user.isEmpty()){
+        if(userOpt.isEmpty()){
             throw new UserNotFoundException("User not found");
+        } else {
+            user = userOpt.get();
         }
 
-        List<TransactionDetailsDto> deposits = user.get().getAccount().getDeposits()
-                .stream().map(TransactionEntity::entityToTransactionDetails).collect(Collectors.toList());
+        List<TransactionDetailsDto> deposits =
+                getAccountTransactions(user, TransactionType.DEPOSIT);
 
-        List<TransactionDetailsDto> withdrawals = user.get().getAccount().getWithdrawals()
-                .stream().map(TransactionEntity::entityToTransactionDetails).collect(Collectors.toList());
+        List<TransactionDetailsDto> withdrawals =
+                getAccountTransactions(user, TransactionType.WITHDRAWAL);
 
-        withdrawals.forEach(withdrawal -> withdrawal.setAmount(withdrawal.getAmount() * -1));
+//        withdrawals.forEach(withdrawal -> withdrawal.setAmount(withdrawal.getAmount() * -1));
 
         return UserAccountDto.builder()
-                .firstName(user.get().getFirstName())
-                .lastName(user.get().getLastName())
-                .balance(user.get().getAccount().getBalance())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .balance(user.getAccount().getBalance())
                 .deposits(deposits)
                 .withdrawals(withdrawals)
                 .build();
+    }
+
+    /**
+     *
+     */
+    private List<TransactionDetailsDto> getAccountTransactions
+    (UserEntity user, TransactionType transactionType){
+
+        if(transactionType.equals(TransactionType.WITHDRAWAL)){
+            List<TransactionDetailsDto> withdrawals = user.getAccount().getWithdrawals()
+                    .stream().map(TransactionEntity::entityToTransactionDetails).toList();
+
+            withdrawals.forEach(withdrawal -> withdrawal.setAmount(withdrawal.getAmount() * -1));
+
+            return withdrawals;
+        }
+
+        return user.getAccount().getDeposits()
+                .stream().map(TransactionEntity::entityToTransactionDetails).toList();
     }
 
 
@@ -79,7 +101,7 @@ public class UserAccountServiceImpl implements UserAccountService {
                 bankAccountRepository.findBankAccountEntityByOwnerEmail(email);
 
         if(account.isEmpty()){
-            throw new RuntimeException("User does not exist");
+            return -1;
         }
 
         return account.get().getId();

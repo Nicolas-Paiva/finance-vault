@@ -52,7 +52,7 @@ public class AuthenticationController {
 
 
     /**
-     * Endpoint dedicated to providing user sign in
+     * Logs a user in, returning a JWT
      */
     @PostMapping("/sign-in")
     public ResponseEntity<?> signIn(@RequestBody SignInRequest signInRequest){
@@ -66,6 +66,13 @@ public class AuthenticationController {
     }
 
 
+    /**
+     * Activates the user account
+     * upon receiving the confirmation token.
+     *
+     * If the token is not valid, an appropriate
+     * response is sent to the user, indicating the error
+     */
     @PostMapping("/activate-account")
     public ResponseEntity<?> activateAccount(@RequestBody ConfirmationTokenRequest token){
         ConfirmationTokenResponse confirmationTokenResponse =

@@ -20,6 +20,6 @@ public class TransactionRequestDto {
 
     private String destinationEmail;
 
-    private float amount;
+    private double amount;
 
 }

@@ -25,7 +25,7 @@ public class TransactionDetailsDto {
 
     private String receiverEmail;
 
-    private float amount;
+    private double amount;
 
     private LocalDateTime createdAt;
 

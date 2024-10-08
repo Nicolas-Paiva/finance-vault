@@ -27,7 +27,7 @@ public class BankAccountEntity {
 
     private String ownerEmail;
 
-    float balance;
+    double balance;
 
     @JsonBackReference
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "receiverAccountId")

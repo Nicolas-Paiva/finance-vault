@@ -14,7 +14,7 @@ import java.util.UUID;
  * Confirmation token that is stored in
  * the database for activating a user account
  */
-@Entity(name = "confirmation_token")
+@Entity(name = "confirmation_tokens")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,16 +37,4 @@ public class ConfirmationTokenEntity {
     @JoinColumn(nullable = false)
     private UserEntity user;
 
-    public static ConfirmationTokenEntity buildUserConfirmationToken(UserEntity user, String token){
-        return ConfirmationTokenEntity.builder()
-                .token(token)
-                .createdAt(LocalDateTime.now())
-                .expiresAt(LocalDateTime.now().plusMinutes(15))
-                .user(user)
-                .build();
-    }
-
-    public static String generateTokenString(){
-        return UUID.randomUUID().toString();
-    }
 }

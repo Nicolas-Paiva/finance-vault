@@ -23,7 +23,7 @@ public class UserAccountDto {
 
     private String lastName;
 
-    private float balance;
+    private double balance;
 
     List<TransactionDetailsDto> deposits;
 

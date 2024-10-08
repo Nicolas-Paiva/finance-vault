@@ -17,10 +17,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MonthlyResumeDto {
 
-    private float totalExpenses;
+    private double totalExpenses;
 
-    private float totalDeposits;
+    private double totalDeposits;
 
-    private float monthlyBalance;
+    private double monthlyBalance;
 
 }

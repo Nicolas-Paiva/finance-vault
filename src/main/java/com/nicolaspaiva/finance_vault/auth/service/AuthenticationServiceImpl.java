@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
      * Password validation is
      * provided by Spring Validation.
      */
+    @Transactional
     public SignUpResponse signUp(SignUpRequest signUpRequest){
 
         if(emailAlreadyExists(signUpRequest.getEmail())){
@@ -62,10 +64,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
             user.setAccount(bankAccount);
 
-            String token = ConfirmationTokenEntity.generateTokenString();
-
-            ConfirmationTokenEntity confirmationToken =
-                    ConfirmationTokenEntity.buildUserConfirmationToken(user, token);
+            String token = confirmationTokenService.generateTokenString();
 
             String link = "http://localhost:8080/api/v1/auth/activate-account";
 
@@ -74,7 +73,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
             userService.saveUser(user);
 
-            confirmationTokenService.saveConfirmationToken(confirmationToken);
+            confirmationTokenService.createConfirmationToken(user, token);
 
         } catch (Exception e){
             e.getLocalizedMessage();

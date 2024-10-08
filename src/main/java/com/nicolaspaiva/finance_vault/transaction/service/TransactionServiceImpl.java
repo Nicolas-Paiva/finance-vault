@@ -1,7 +1,6 @@
 package com.nicolaspaiva.finance_vault.transaction.service;
 
 import com.nicolaspaiva.finance_vault.bankaccount.entity.BankAccountEntity;
-import com.nicolaspaiva.finance_vault.bankaccount.repository.BankAccountRepository;
 import com.nicolaspaiva.finance_vault.transaction.dto.request.TransactionRequestDto;
 import com.nicolaspaiva.finance_vault.transaction.dto.response.TransactionResponseDto;
 import com.nicolaspaiva.finance_vault.transaction.entity.TransactionEntity;
@@ -60,11 +59,15 @@ public class TransactionServiceImpl implements TransactionService {
             return TransactionResponseDto.notEnoughFunds();
         }
 
-        Optional<BankAccountEntity> receiverAcc =
+        Optional<BankAccountEntity> receiverAccOpt =
                 getAccountByEmail(transactionRequest.getDestinationEmail());
 
-        if(receiverAcc.isEmpty()){
+        BankAccountEntity receiverAcc;
+
+        if(receiverAccOpt.isEmpty()){
             return TransactionResponseDto.accountNotFound();
+        } else {
+            receiverAcc = receiverAccOpt.get();
         }
 
         if(isSelfTransaction(email, transactionRequest.getDestinationEmail())){
@@ -72,13 +75,17 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         TransactionEntity transaction = createTransaction(transactionRequest,
-                receiverAcc.get(), senderAcc.get());
+                receiverAcc, senderAcc.get());
 
-        modifyFunds(receiverAcc.get(), senderAcc.get(), transactionRequest.getAmount());
+        modifyFunds(receiverAcc, senderAcc.get(), transactionRequest.getAmount());
 
         transactionRepository.save(transaction);
 
         return TransactionResponseDto.transactionSuccessful();
+    }
+
+    private double calculateFee(double transactionAmount){
+        return transactionAmount * 0.05;
     }
 
 
@@ -86,9 +93,14 @@ public class TransactionServiceImpl implements TransactionService {
      * Returns a list with either withdrawals
      * or deposits
      */
-    public List<Float> getUserMonthlyTransactionValuesByEmail(String email, TransactionType transactionType){
+    public List<Double> getUserMonthlyTransactionValuesByEmail(String email, TransactionType transactionType){
 
         int userId = userAccountService.getUserIdByEmail(email);
+
+        // Returns an empty list if the user does not exist
+        if(userId < 1){
+            return new ArrayList<>();
+        }
 
         LocalDateTime firstDayOfTheMonth = DateUtils.getFirstDayOfTheMonth();
 
@@ -112,8 +124,8 @@ public class TransactionServiceImpl implements TransactionService {
      * of the transaction in the
      * transaction entities
      */
-    private List<Float> getAllTransactionValues(List<TransactionEntity> transactionEntities){
-        List<Float> values = new ArrayList<>();
+    private List<Double> getAllTransactionValues(List<TransactionEntity> transactionEntities){
+        List<Double> values = new ArrayList<>();
 
         for(TransactionEntity transactionEntity : transactionEntities){
             values.add(transactionEntity.getAmount());
@@ -135,17 +147,19 @@ public class TransactionServiceImpl implements TransactionService {
                 .receiverEmail(receiverAcc.getOwnerEmail())
                 .senderEmail(senderAcc.getOwnerEmail())
                 .amount(transactionRequest.getAmount())
+                .fee(calculateFee(transactionRequest.getAmount()))
                 .createdAt(LocalDateTime.now())
                 .build();
     }
 
 
     /**
-     * Modify the funds for both sender and receiver accounts
+     * Modify the funds for both sender and receiver accounts,
+     * adding a fee to the sender's account
      */
-    private void modifyFunds(BankAccountEntity receiverAcc, BankAccountEntity senderAcc, float amount){
+    private void modifyFunds(BankAccountEntity receiverAcc, BankAccountEntity senderAcc, double amount){
         addFunds(receiverAcc, amount);
-        removeFunds(senderAcc, amount);
+        removeFunds(senderAcc, amount + calculateFee(amount));
     }
 
 
@@ -157,12 +171,12 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
 
-    private boolean isAmountValid(float amount){
+    private boolean isAmountValid(double amount){
         return amount > 0;
     }
 
 
-    private boolean accountHasFunds(BankAccountEntity bankAccountEntity, float amount){
+    private boolean accountHasFunds(BankAccountEntity bankAccountEntity, double amount){
         return bankAccountEntity.getBalance() > amount;
     }
 
@@ -178,7 +192,7 @@ public class TransactionServiceImpl implements TransactionService {
     /**
      * Adds funds to a bank account
      */
-    private void addFunds(BankAccountEntity account, float amount){
+    private void addFunds(BankAccountEntity account, double amount){
         account.setBalance(account.getBalance() + amount);
     }
 
@@ -186,7 +200,47 @@ public class TransactionServiceImpl implements TransactionService {
     /**
      * Removes funds from an account
      */
-    private void removeFunds(BankAccountEntity account, float amount){
+    private void removeFunds(BankAccountEntity account, double amount){
         account.setBalance(account.getBalance() - amount);
+    }
+
+
+    /**
+     * Retrieves a list with all the transactions
+     * performed in the current month
+     */
+    public List<TransactionEntity> getMonthlyTransactions(){
+        return transactionRepository
+                .getMonthlyTransactions(DateUtils.getFirstDayOfTheMonth(), DateUtils.getToday());
+    }
+
+    /**
+     * Returns the number of transactions
+     * performed in the current month
+     */
+    public int getMonthlyTransactionNumber(){
+        return getMonthlyTransactions().size();
+    }
+
+    public double getMonthlyTransactionVolume(){
+        List<TransactionEntity> monthlyTransactions = getMonthlyTransactions();
+
+        /*
+        float total = 0;
+
+        for (TransactionEntity monthlyTransaction : monthlyTransactions) {
+            total += monthlyTransaction.getAmount();
+        }
+
+        return total;
+        */
+
+        return monthlyTransactions.stream().mapToDouble(TransactionEntity::getAmount).sum();
+    }
+
+    public double getMonthlyTransactionFees(){
+        return getMonthlyTransactions().stream()
+                        .mapToDouble(TransactionEntity::getFee).sum();
+        // .reduce(0.0, Double::sum)
     }
 }

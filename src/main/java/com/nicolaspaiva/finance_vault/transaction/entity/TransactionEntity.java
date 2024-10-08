@@ -40,7 +40,9 @@ public class TransactionEntity {
 
     private String receiverEmail;
 
-    private float amount;
+    private double amount;
+
+    private double fee;
 
     private LocalDateTime createdAt;
 

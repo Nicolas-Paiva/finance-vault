@@ -8,4 +8,8 @@ public class DateUtils {
         return LocalDateTime.now().withDayOfMonth(1);
     }
 
+    public static LocalDateTime getToday(){
+        return LocalDateTime.now();
+    }
+
 }

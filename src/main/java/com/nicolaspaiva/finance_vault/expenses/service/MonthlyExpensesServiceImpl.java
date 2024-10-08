@@ -23,13 +23,13 @@ public class MonthlyExpensesServiceImpl implements MonthlyExpensesService{
     @Override
     public MonthlyResumeDto getMonthlyExpensesAndBalance(String email){
 
-        List<Float> expenses = transactionService.getUserMonthlyTransactionValuesByEmail(email, TransactionType.WITHDRAWAL);
+        List<Double> expenses = transactionService.getUserMonthlyTransactionValuesByEmail(email, TransactionType.WITHDRAWAL);
 
-         List<Float> deposits = transactionService.getUserMonthlyTransactionValuesByEmail(email, TransactionType.DEPOSIT);
+         List<Double> deposits = transactionService.getUserMonthlyTransactionValuesByEmail(email, TransactionType.DEPOSIT);
 
-        float totalExpenses = sumTransactions(expenses);
+        double totalExpenses = sumTransactions(expenses);
 
-        float totalDeposits = sumTransactions(deposits);
+        double totalDeposits = sumTransactions(deposits);
 
         return MonthlyResumeDto.builder()
                 .totalExpenses(totalExpenses)
@@ -40,15 +40,15 @@ public class MonthlyExpensesServiceImpl implements MonthlyExpensesService{
 
 
     // TODO: Implement averages for long term comparison
-    private float calculateAverage(List<Float> values){
+    private double calculateAverage(List<Double> values){
         return sumTransactions(values) / values.size();
     }
 
 
-    private float sumTransactions(List<Float> values){
-        float sum = 0;
+    private double sumTransactions(List<Double> values){
+        double sum = 0;
 
-        for(float value : values){
+        for(double value : values){
             sum += value;
         }
 
