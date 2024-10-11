@@ -1,13 +1,10 @@
 package com.nicolaspaiva.finance_vault.transaction.service;
 
 import com.nicolaspaiva.finance_vault.transaction.dto.request.TransactionRequestDto;
-import com.nicolaspaiva.finance_vault.transaction.dto.response.TransactionDetailsDto;
 import com.nicolaspaiva.finance_vault.transaction.dto.response.TransactionResponseDto;
 import com.nicolaspaiva.finance_vault.transaction.entity.TransactionEntity;
 import com.nicolaspaiva.finance_vault.transaction.entity.TransactionType;
-import com.nicolaspaiva.finance_vault.user.entity.UserEntity;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TransactionService {
@@ -18,7 +15,7 @@ public interface TransactionService {
 
     List<TransactionEntity> getMonthlyTransactions();
 
-    int getMonthlyTransactionNumber();
+    int countMonthlyTransactions();
 
     double getMonthlyTransactionVolume();
 

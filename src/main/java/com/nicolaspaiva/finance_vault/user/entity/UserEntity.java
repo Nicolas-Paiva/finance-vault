@@ -43,6 +43,8 @@ public class UserEntity implements UserDetails {
 
     private Role role;
 
+    private LocalDateTime lastActive;
+
     private LocalDateTime createdAt;
 
     private boolean isActive = false;

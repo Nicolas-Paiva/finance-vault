@@ -5,6 +5,7 @@ import com.nicolaspaiva.finance_vault.transaction.repository.TransactionReposito
 import com.nicolaspaiva.finance_vault.transaction.service.TransactionService;
 import com.nicolaspaiva.finance_vault.user.entity.UserEntity;
 import com.nicolaspaiva.finance_vault.user.repository.UserRepository;
+import com.nicolaspaiva.finance_vault.user.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ public class AdminServiceImpl implements AdminService {
 
     private final TransactionRepository transactionRepository;
 
+    private final UserAccountService userService;
 
 
     @Override
@@ -33,9 +35,12 @@ public class AdminServiceImpl implements AdminService {
         }
     }
 
+
+    @Override
     public Optional<UserEntity> getUserByEmail(String email){
         return userRepository.findByEmail(email);
     }
+
 
     /**
      * Gets the admin dashboard
@@ -47,8 +52,12 @@ public class AdminServiceImpl implements AdminService {
 
                 .numberOfUsers(userRepository.count())
 
+                .monthlyActiveUsers(userService.countMonthlyActiveUsers())
+
+                .newMonthlyUsers(userService.countNewMonthlyUsers())
+
                 .monthlyTransactions(transactionService
-                        .getMonthlyTransactionNumber())
+                        .countMonthlyTransactions())
 
                 .monthlyTransactionVolume(transactionService
                         .getMonthlyTransactionVolume())

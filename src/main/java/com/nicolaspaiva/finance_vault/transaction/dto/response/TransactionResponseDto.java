@@ -40,6 +40,10 @@ public class TransactionResponseDto {
         return new TransactionResponseDto(false, "Invalid Transaction");
     }
 
+    public static TransactionResponseDto invalidTransaction(String message){
+        return new TransactionResponseDto(false, message);
+    }
+
 
     public static TransactionResponseDto invalidAmount(){
         return new TransactionResponseDto(false, "Invalid amount");

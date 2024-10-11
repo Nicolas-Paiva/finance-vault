@@ -29,10 +29,14 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
         confirmationTokenRepository.save(token);
     }
 
+
+    @Override
     public Optional<ConfirmationTokenEntity> getConfirmationToken(String token){
         return confirmationTokenRepository.findByToken(token);
     }
 
+
+    @Override
     public void setConfirmedAt(ConfirmationTokenEntity confirmationToken){
         confirmationToken.setConfirmedAt(LocalDateTime.now());
     }
@@ -73,13 +77,14 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
      * Builds and saves the new user's
      * confirmation token
      */
+    @Override
     public void createConfirmationToken(UserEntity user, String token){
 
         ConfirmationTokenEntity confirmationToken =
                 ConfirmationTokenEntity.builder()
                         .token(token)
                         .createdAt(LocalDateTime.now())
-                        .expiresAt(LocalDateTime.now().minusMinutes(15))
+                        .expiresAt(LocalDateTime.now().plusMinutes(30))
                         .user(user)
                         .build();
 
@@ -91,6 +96,7 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
      * Generates the string that composes the
      * confirmation token
      */
+    @Override
     public String generateTokenString(){
         return UUID.randomUUID().toString();
     }

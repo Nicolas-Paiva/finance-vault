@@ -49,7 +49,7 @@ public class FinanceVaultApplication implements CommandLineRunner {
 					.password(new BCryptPasswordEncoder().encode("u"))
 					.role(Role.USER)
 					.createdAt(LocalDateTime.now())
-					.isActive(true)
+					.isActive(false)
 					.build();
 			userRepository.save(user);
 		}

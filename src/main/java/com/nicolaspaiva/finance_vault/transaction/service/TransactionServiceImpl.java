@@ -41,6 +41,7 @@ public class TransactionServiceImpl implements TransactionService {
      * the TransactionResponseDto based on the
      * status of the transaction.
      */
+    @Override
     public TransactionResponseDto processTransaction(String email,
                                                      TransactionRequestDto transactionRequest){
 
@@ -74,6 +75,10 @@ public class TransactionServiceImpl implements TransactionService {
             return TransactionResponseDto.invalidTransaction();
         }
 
+        if(!userAccountService.checkIfUserIsActiveByEmail(transactionRequest.getDestinationEmail())){
+            return TransactionResponseDto.invalidTransaction("User is not active");
+        }
+
         TransactionEntity transaction = createTransaction(transactionRequest,
                 receiverAcc, senderAcc.get());
 
@@ -93,6 +98,7 @@ public class TransactionServiceImpl implements TransactionService {
      * Returns a list with either withdrawals
      * or deposits
      */
+    @Override
     public List<Double> getUserMonthlyTransactionValuesByEmail(String email, TransactionType transactionType){
 
         int userId = userAccountService.getUserIdByEmail(email);
@@ -209,35 +215,42 @@ public class TransactionServiceImpl implements TransactionService {
      * Retrieves a list with all the transactions
      * performed in the current month
      */
+    @Override
     public List<TransactionEntity> getMonthlyTransactions(){
         return transactionRepository
                 .getMonthlyTransactions(DateUtils.getFirstDayOfTheMonth(), DateUtils.getToday());
     }
 
+
     /**
      * Returns the number of transactions
      * performed in the current month
      */
-    public int getMonthlyTransactionNumber(){
+    @Override
+    public int countMonthlyTransactions(){
         return getMonthlyTransactions().size();
     }
 
+
+    /**
+     * Gets the volume (in €)
+     * of the transactions performed
+     * during the month
+     */
+    @Override
     public double getMonthlyTransactionVolume(){
         List<TransactionEntity> monthlyTransactions = getMonthlyTransactions();
-
-        /*
-        float total = 0;
-
-        for (TransactionEntity monthlyTransaction : monthlyTransactions) {
-            total += monthlyTransaction.getAmount();
-        }
-
-        return total;
-        */
 
         return monthlyTransactions.stream().mapToDouble(TransactionEntity::getAmount).sum();
     }
 
+
+    /**
+     * Gets all the fees obtained
+     * through the transactions
+     * performed in the month
+     */
+    @Override
     public double getMonthlyTransactionFees(){
         return getMonthlyTransactions().stream()
                         .mapToDouble(TransactionEntity::getFee).sum();

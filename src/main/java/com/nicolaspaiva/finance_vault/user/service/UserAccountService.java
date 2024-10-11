@@ -4,7 +4,6 @@ import com.nicolaspaiva.finance_vault.bankaccount.entity.BankAccountEntity;
 import com.nicolaspaiva.finance_vault.user.dto.UserAccountDto;
 import com.nicolaspaiva.finance_vault.user.entity.UserEntity;
 
-import java.security.Principal;
 import java.util.Optional;
 
 public interface UserAccountService {
@@ -21,4 +20,10 @@ public interface UserAccountService {
     int getUserIdByEmail(String email);
 
     Optional<BankAccountEntity> getBankAccountByEmail(String email);
+
+    long countMonthlyActiveUsers();
+
+    boolean checkIfUserIsActiveByEmail(String email);
+
+    long countNewMonthlyUsers();
 }

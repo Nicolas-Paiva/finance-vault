@@ -21,6 +21,7 @@ public class EmailSenderImpl implements EmailSender{
     private String from;
 
     @Async
+    @Override
     public void sendConfirmationEmail(String to, String email){
         try{
 

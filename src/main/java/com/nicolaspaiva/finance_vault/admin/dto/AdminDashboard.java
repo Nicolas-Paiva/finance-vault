@@ -13,6 +13,10 @@ public class AdminDashboard {
 
     long numberOfUsers;
 
+    long monthlyActiveUsers;
+
+    long newMonthlyUsers;
+
     long monthlyTransactions;
 
     double monthlyTransactionVolume;

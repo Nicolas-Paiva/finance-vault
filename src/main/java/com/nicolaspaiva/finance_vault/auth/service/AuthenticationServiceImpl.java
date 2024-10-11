@@ -50,6 +50,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
      * provided by Spring Validation.
      */
     @Transactional
+    @Override
     public SignUpResponse signUp(SignUpRequest signUpRequest){
 
         if(emailAlreadyExists(signUpRequest.getEmail())){
@@ -83,6 +84,43 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         return SignUpResponse.success();
     }
 
+    /**
+     * Sends a JWT to the user in case
+     * authentication is successful.
+     *
+     * if the user is not found or is
+     * inactive, the JWT is not sent,
+     * and an error message is sent
+     * to the client
+     *
+     */
+    @Override
+    public SignInResponse signIn(SignInRequest request){
+
+        authManager.authenticate(new UsernamePasswordAuthenticationToken
+                (request.getEmail(), request.getPassword()));
+
+        UserEntity user;
+
+        Optional<UserEntity> userOpt = userService.findUserByEmail(request.getEmail());
+
+        if(userOpt.isEmpty()){
+            return SignInResponse.userDoesNotExist();
+        } else {
+            user = userOpt.get();
+        }
+
+        if(!user.isActive()){
+            return SignInResponse.userIsInactive();
+        }
+
+        setUserLastActive(user);
+
+        var jwt = jwtService.generateToken(user);
+
+        return SignInResponse.success(jwt);
+    }
+
 
     /**
      * Creates a user entity based on a SignUpRequest
@@ -108,38 +146,9 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     }
 
 
-    /**
-     * Sends a JWT to the user in case
-     * authentication is successful.
-     *
-     * if the user is not found or is
-     * inactive, the JWT is not sent,
-     * and an error message is sent
-     * to the client
-     *
-     */
-    public SignInResponse signIn(SignInRequest request){
-
-        authManager.authenticate(new UsernamePasswordAuthenticationToken
-                (request.getEmail(), request.getPassword()));
-
-        UserEntity user;
-
-        Optional<UserEntity> userOpt = userService.findUserByEmail(request.getEmail());
-
-        if(userOpt.isEmpty()){
-            return SignInResponse.userDoesNotExist();
-        } else {
-            user = userOpt.get();
-        }
-
-        if(!user.isActive()){
-            return SignInResponse.userIsInactive();
-        }
-
-        var jwt = jwtService.generateToken(user);
-
-        return SignInResponse.success(jwt);
+    private void setUserLastActive(UserEntity user){
+        user.setLastActive(LocalDateTime.now());
+        userService.saveUser(user);
     }
 
 

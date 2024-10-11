@@ -1,0 +1,9 @@
+1. Add admin functionality
+
+2. Add monthly averages
+
+8. Annotate all implementation methods with @Override
+
+9. Annotate all entities with database constraints
+
+10. Create admin dashboard entity for reports (monthly reports as well)
