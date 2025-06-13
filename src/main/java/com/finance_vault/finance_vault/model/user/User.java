@@ -1,10 +1,14 @@
 package com.finance_vault.finance_vault.model.user;
 
+import com.finance_vault.finance_vault.model.transaction.Transaction;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity(name = "users")
 @Data
@@ -27,12 +31,29 @@ public class User {
     )
     private Long id;
 
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
 
+    @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String lastName;
+
+    private float balance;
+
+    @OneToMany(mappedBy = "user")
+    private List<Transaction> transactions;
+
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.balance = 0;
+        this.createdAt = LocalDateTime.now();
+    }
 
 }
