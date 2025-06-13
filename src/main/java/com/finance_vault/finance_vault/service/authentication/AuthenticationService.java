@@ -35,8 +35,6 @@ public class AuthenticationService {
 
     public RegistrationResponse register(UserRegistrationRequest userRegistrationRequest) {
 
-        System.out.println(userRegistrationRequest.getEmail());
-
         // Checks whether the username already exists
         if (userRepository.findByEmail(userRegistrationRequest.getEmail()).isPresent()) {
             throw InvalidRegistrationException.userEmailAlreadyExists();

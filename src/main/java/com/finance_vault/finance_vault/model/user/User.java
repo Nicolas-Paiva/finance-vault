@@ -45,8 +45,11 @@ public class User {
 
     private float balance;
 
-    @OneToMany(mappedBy = "user")
-    private List<Transaction> transactions;
+    @OneToMany(mappedBy = "sender")
+    private List<Transaction> sentTransactions;
+
+    @OneToMany(mappedBy = "receiver")
+    private List<Transaction> receivedTransactions;
 
     private LocalDateTime createdAt;
 

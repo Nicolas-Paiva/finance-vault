@@ -4,7 +4,9 @@ import com.finance_vault.finance_vault.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
-@Entity
+import java.time.LocalDateTime;
+
+@Entity(name = "transactions")
 @Data
 public class Transaction {
 
@@ -20,6 +22,22 @@ public class Transaction {
     )
     private Long id;
 
+    @Column(nullable = false)
+    private float amount;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
+    @JoinColumn(nullable = false)
     @ManyToOne
-    private User user;
+    private User receiver;
+
+    @JoinColumn(nullable = false)
+    @ManyToOne
+    private User sender;
+
+    @PrePersist
+    private void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

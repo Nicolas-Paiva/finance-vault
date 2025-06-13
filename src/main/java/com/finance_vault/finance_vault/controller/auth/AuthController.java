@@ -1,8 +1,10 @@
-package com.finance_vault.finance_vault.controller.user;
+package com.finance_vault.finance_vault.controller.auth;
 
 import com.finance_vault.finance_vault.dto.auth.LoginSuccessResponse;
+import com.finance_vault.finance_vault.dto.auth.RegistrationResponse;
 import com.finance_vault.finance_vault.dto.user.UserRegistrationRequest;
 import com.finance_vault.finance_vault.service.authentication.AuthenticationService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class UserController {
+@Tag(name = "User controller", description = "Used for authentication")
+public class AuthController {
 
     private final AuthenticationService authenticationService;
 
@@ -27,8 +30,8 @@ public class UserController {
      * is sent, but created is set to false. A message is also displayed,
      * depending on the error.
      */
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid UserRegistrationRequest userRegistrationRequest) {
+    @PostMapping("/api/auth/register")
+    public ResponseEntity<RegistrationResponse> register(@RequestBody @Valid UserRegistrationRequest userRegistrationRequest) {
         return ResponseEntity.ok(authenticationService.register(userRegistrationRequest));
     }
 
@@ -40,7 +43,7 @@ public class UserController {
      * otherwise, a LoginErrorResponse is returned
      * to the client
      */
-    @PostMapping("/login")
+    @PostMapping("/api/auth/login")
     public ResponseEntity<LoginSuccessResponse> login(@RequestBody UserRegistrationRequest userRegistrationRequest) {
         return ResponseEntity.ok(authenticationService.login(userRegistrationRequest));
     }
