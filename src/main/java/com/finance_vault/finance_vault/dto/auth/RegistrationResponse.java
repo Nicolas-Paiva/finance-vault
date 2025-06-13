@@ -1,6 +1,6 @@
 package com.finance_vault.finance_vault.dto.auth;
 
-import com.finance_vault.finance_vault.dto.user.UserDTO;
+import com.finance_vault.finance_vault.dto.user.UserRegistrationRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,10 +21,10 @@ public class RegistrationResponse {
      * Returns the success message when the user is
      * created successfully
      */
-    public static RegistrationResponse success(UserDTO userDTO) {
+    public static RegistrationResponse success(UserRegistrationRequest userRegistrationRequest) {
         return RegistrationResponse.builder()
                 .created(true)
-                .message("User " + userDTO.getEmail() + " created successfully!")
+                .message("User " + userRegistrationRequest.getEmail() + " created successfully!")
                 .build();
     }
 

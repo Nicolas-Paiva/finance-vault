@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class UserRegistrationRequest {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
@@ -28,17 +28,27 @@ public class UserDTO {
     @Size(min = 8, message = "Password must have at least 8 characters")
     private String password;
 
+    @NotBlank
+    @Size(min = 3, message = "Name must have at least three characters")
+    private String name;
 
-    public static User toUser(UserDTO userDto) {
+    @NotBlank
+    @Size(min = 3, message = "Name must have at least three characters")
+    private String lastName;
+
+
+    public static User toUser(UserRegistrationRequest userRegistrationRequest) {
         return User.builder()
-                .email(userDto.getEmail())
-                .password(userDto.getPassword())
+                .email(userRegistrationRequest.getEmail())
+                .password(userRegistrationRequest.getPassword())
+                .name(userRegistrationRequest.getName())
+                .lastName(userRegistrationRequest.getLastName())
                 .build();
     }
 
 
-    public static UserDTO toDTO(User user) {
-        return UserDTO.builder()
+    public static UserRegistrationRequest toDTO(User user) {
+        return UserRegistrationRequest.builder()
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .build();

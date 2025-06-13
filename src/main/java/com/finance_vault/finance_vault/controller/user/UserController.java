@@ -1,8 +1,8 @@
 package com.finance_vault.finance_vault.controller.user;
 
 import com.finance_vault.finance_vault.dto.auth.LoginSuccessResponse;
-import com.finance_vault.finance_vault.dto.user.UserDTO;
-import com.finance_vault.finance_vault.service.user.UserService;
+import com.finance_vault.finance_vault.dto.user.UserRegistrationRequest;
+import com.finance_vault.finance_vault.service.authentication.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final AuthenticationService authenticationService;
 
 
     /**
@@ -28,8 +28,8 @@ public class UserController {
      * depending on the error.
      */
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid UserDTO userDTO) {
-        return ResponseEntity.ok(userService.register(userDTO));
+    public ResponseEntity<?> register(@RequestBody @Valid UserRegistrationRequest userRegistrationRequest) {
+        return ResponseEntity.ok(authenticationService.register(userRegistrationRequest));
     }
 
 
@@ -41,8 +41,8 @@ public class UserController {
      * to the client
      */
     @PostMapping("/login")
-    public ResponseEntity<LoginSuccessResponse> login(@RequestBody UserDTO userDTO) {
-        return ResponseEntity.ok(userService.login(userDTO));
+    public ResponseEntity<LoginSuccessResponse> login(@RequestBody UserRegistrationRequest userRegistrationRequest) {
+        return ResponseEntity.ok(authenticationService.login(userRegistrationRequest));
     }
 
 }
