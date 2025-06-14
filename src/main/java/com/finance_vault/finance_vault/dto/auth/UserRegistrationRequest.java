@@ -1,4 +1,4 @@
-package com.finance_vault.finance_vault.dto.user;
+package com.finance_vault.finance_vault.dto.auth;
 
 import com.finance_vault.finance_vault.model.user.User;
 import jakarta.validation.constraints.Email;

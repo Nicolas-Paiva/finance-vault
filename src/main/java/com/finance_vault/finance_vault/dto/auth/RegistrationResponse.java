@@ -1,6 +1,5 @@
 package com.finance_vault.finance_vault.dto.auth;
 
-import com.finance_vault.finance_vault.dto.user.UserRegistrationRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +9,8 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RegistrationResponse {
 
     private boolean created;

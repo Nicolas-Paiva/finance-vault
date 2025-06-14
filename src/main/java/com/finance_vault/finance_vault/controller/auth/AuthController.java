@@ -2,7 +2,7 @@ package com.finance_vault.finance_vault.controller.auth;
 
 import com.finance_vault.finance_vault.dto.auth.LoginSuccessResponse;
 import com.finance_vault.finance_vault.dto.auth.RegistrationResponse;
-import com.finance_vault.finance_vault.dto.user.UserRegistrationRequest;
+import com.finance_vault.finance_vault.dto.auth.UserRegistrationRequest;
 import com.finance_vault.finance_vault.service.authentication.AuthenticationService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

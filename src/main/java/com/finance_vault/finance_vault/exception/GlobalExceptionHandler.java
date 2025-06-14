@@ -1,6 +1,6 @@
 package com.finance_vault.finance_vault.exception;
 
-import com.finance_vault.finance_vault.dto.ErrorResponse;
+import com.finance_vault.finance_vault.dto.error.ErrorResponse;
 import com.finance_vault.finance_vault.dto.auth.RegistrationResponse;
 import com.finance_vault.finance_vault.dto.auth.LoginErrorResponse;
 import com.finance_vault.finance_vault.dto.auth.LoginResponse;

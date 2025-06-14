@@ -1,7 +1,7 @@
 package com.finance_vault.finance_vault.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finance_vault.finance_vault.dto.ErrorResponse;
+import com.finance_vault.finance_vault.dto.error.ErrorResponse;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

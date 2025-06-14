@@ -1,6 +1,9 @@
 package com.finance_vault.finance_vault.controller.dashboard;
 
-import com.finance_vault.finance_vault.exception.UserNotFoundException;
+import com.finance_vault.finance_vault.dto.dashboard.DashboardDataDTO;
+import com.finance_vault.finance_vault.model.user.User;
+import com.finance_vault.finance_vault.service.dashboard.DashboardService;
+import com.finance_vault.finance_vault.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -16,14 +19,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class DashboardController {
 
-    // TODO: Get the user by email and retrieve data
-    // TODO: Create UserService for user related data
-    // TODO: Create TransactionService for transactions
-    // TODO: Create Dashboard service to invoke these services
+    // TODO: Create interfaces and implement them for other services
 
+    private final UserService userService;
+
+    private final DashboardService dashboardService;
+
+
+    /**
+     * Returns the user's dashboard data, which includes the user's name
+     * and current balance.
+     *
+     * If the user does not exist, a UserNotFoundException is thrown,
+     * returning the message to the client.
+     */
     @GetMapping("/dashboard")
     public ResponseEntity<?> getSummary(Authentication authentication) {
-        return ResponseEntity.ok(authentication.getName());
+        User user = userService.getUserFromAuthentication(authentication);
+        DashboardDataDTO dashboardDataDTO = dashboardService.getDashboardData(user);
+
+        return ResponseEntity.ok(dashboardDataDTO);
     }
 
 }

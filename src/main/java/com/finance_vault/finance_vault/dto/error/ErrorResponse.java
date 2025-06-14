@@ -1,4 +1,4 @@
-package com.finance_vault.finance_vault.dto;
+package com.finance_vault.finance_vault.dto.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

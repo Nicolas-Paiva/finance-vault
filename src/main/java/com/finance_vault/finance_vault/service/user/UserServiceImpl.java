@@ -14,7 +14,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public User getUserEmailFromAuthentication(Authentication authentication) {
+    public User getUserFromAuthentication(Authentication authentication) {
         String userEmail = authentication.getName();
         return userRepository.findByEmail(userEmail).orElseThrow(UserNotFoundException::new);
     }
