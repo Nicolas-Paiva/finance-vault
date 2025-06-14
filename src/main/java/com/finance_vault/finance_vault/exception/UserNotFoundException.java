@@ -5,10 +5,9 @@ import lombok.Data;
 @Data
 public class UserNotFoundException extends RuntimeException {
 
-    private String message;
 
     public UserNotFoundException() {
-        message = "User not found";
+        super("User not found");
     }
 
 }

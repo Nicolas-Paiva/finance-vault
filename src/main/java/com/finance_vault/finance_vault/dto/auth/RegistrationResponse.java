@@ -6,13 +6,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class RegistrationResponse {
 
     private boolean created;
+
+    private LocalDateTime timeStamp;
 
     private String message;
 
@@ -24,12 +26,14 @@ public class RegistrationResponse {
     public static RegistrationResponse success(UserRegistrationRequest userRegistrationRequest) {
         return RegistrationResponse.builder()
                 .created(true)
+                .timeStamp(LocalDateTime.now())
                 .message("User " + userRegistrationRequest.getEmail() + " created successfully!")
                 .build();
     }
 
     public static RegistrationResponse failed(String message) {
         return RegistrationResponse.builder()
+                .timeStamp(LocalDateTime.now())
                 .created(false)
                 .message(message)
                 .build();

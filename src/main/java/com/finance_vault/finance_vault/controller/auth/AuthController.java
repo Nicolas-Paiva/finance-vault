@@ -30,7 +30,7 @@ public class AuthController {
      * is sent, but created is set to false. A message is also displayed,
      * depending on the error.
      */
-    @PostMapping("/api/auth/register")
+    @PostMapping("/auth/register")
     public ResponseEntity<RegistrationResponse> register(@RequestBody @Valid UserRegistrationRequest userRegistrationRequest) {
         return ResponseEntity.ok(authenticationService.register(userRegistrationRequest));
     }
@@ -43,7 +43,7 @@ public class AuthController {
      * otherwise, a LoginErrorResponse is returned
      * to the client
      */
-    @PostMapping("/api/auth/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<LoginSuccessResponse> login(@RequestBody UserRegistrationRequest userRegistrationRequest) {
         return ResponseEntity.ok(authenticationService.login(userRegistrationRequest));
     }

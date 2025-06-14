@@ -42,7 +42,7 @@ public class SecurityConfig {
 
         return http.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers("api/auth/**", "/swagger-ui/**", "/v3/**").permitAll()
+                        request.requestMatchers("/auth/**", "/swagger-ui/**", "/v3/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

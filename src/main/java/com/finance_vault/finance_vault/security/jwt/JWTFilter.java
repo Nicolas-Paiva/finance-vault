@@ -1,7 +1,7 @@
 package com.finance_vault.finance_vault.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.finance_vault.finance_vault.dto.GenericErrorResponse;
+import com.finance_vault.finance_vault.dto.ErrorResponse;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -43,7 +43,7 @@ public class JWTFilter extends OncePerRequestFilter {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
 
-            GenericErrorResponse body = new GenericErrorResponse(
+            ErrorResponse body = new ErrorResponse(
                     "Authentication error: " + ex.getMessage(),
                     401,
                     LocalDateTime.now()

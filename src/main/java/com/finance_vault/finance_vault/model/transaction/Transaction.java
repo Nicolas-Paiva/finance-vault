@@ -36,8 +36,10 @@ public class Transaction {
     @ManyToOne
     private User sender;
 
+
     @PrePersist
     private void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
+
 }

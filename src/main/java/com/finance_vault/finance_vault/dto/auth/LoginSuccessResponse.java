@@ -10,6 +10,7 @@ public class LoginSuccessResponse extends LoginResponse {
     private String jwtToken;
 
     public LoginSuccessResponse(String jwtToken) {
+        super();
         setSuccess(true);
         this.jwtToken = jwtToken;
     }

@@ -1,6 +1,6 @@
 package com.finance_vault.finance_vault.exception;
 
-import com.finance_vault.finance_vault.dto.GenericErrorResponse;
+import com.finance_vault.finance_vault.dto.ErrorResponse;
 import com.finance_vault.finance_vault.dto.auth.RegistrationResponse;
 import com.finance_vault.finance_vault.dto.auth.LoginErrorResponse;
 import com.finance_vault.finance_vault.dto.auth.LoginResponse;
@@ -23,13 +23,13 @@ public class GlobalExceptionHandler {
      * validation at the controller fails
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<GenericErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
             errors.put(error.getField(), error.getDefaultMessage());
         }
 
-        GenericErrorResponse response = GenericErrorResponse.builder()
+        ErrorResponse response = ErrorResponse.builder()
                 .message("Validation failed")
                 .status(HttpStatus.BAD_REQUEST.value())
                 .timestamp(LocalDateTime.now())
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
 
     /**
      * Handles the exception when the user provides an already existing username,
-     * or when the username is smaller than 3 characters.
+     * or when the password does not match specified conditions.
      */
     @ExceptionHandler(InvalidRegistrationException.class)
     public ResponseEntity<RegistrationResponse> handleInvalidEmail(InvalidRegistrationException e) {
@@ -51,24 +51,19 @@ public class GlobalExceptionHandler {
 
 
     /**
-     * Handles the case where the user tries to login
+     * Handles the case where the user tries to log in
      * but there is no user or the credentials are incorrect
      */
     @ExceptionHandler(InvalidEmailOrPassword.class)
-    public ResponseEntity<LoginResponse> handleInvalidEmailOrPassword(InvalidEmailOrPassword e) {
+    public ResponseEntity<LoginResponse> handleInvalidEmailOrPassword() {
         return ResponseEntity.badRequest().body(new LoginErrorResponse());
     }
 
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<?> handleUserNotFound(UserNotFoundException e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        ErrorResponse errorBody = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
+        return new ResponseEntity<>(errorBody, HttpStatus.BAD_REQUEST);
     }
 
-
-    @ExceptionHandler(ExpenseNotFoundException.class)
-    public ResponseEntity<?> handleExpenseNotFound() {
-        GenericErrorResponse response = new GenericErrorResponse("Expense not found", 404, LocalDateTime.now());
-        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-    }
 }

@@ -10,6 +10,7 @@ public class LoginErrorResponse extends LoginResponse {
     private String message;
 
     public LoginErrorResponse() {
+        super();
         setSuccess(false);
         message = "Invalid email or password";
     }

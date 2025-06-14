@@ -3,10 +3,17 @@ package com.finance_vault.finance_vault.dto.auth;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
-@NoArgsConstructor
 public class LoginResponse {
 
     private boolean success;
+
+    private LocalDateTime timeStamp;
+
+    public LoginResponse() {
+        timeStamp = LocalDateTime.now();
+    }
 
 }
