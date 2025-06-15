@@ -1,8 +1,7 @@
 package com.finance_vault.finance_vault.service.user;
 
-import com.finance_vault.finance_vault.exception.UserNotFoundException;
 import com.finance_vault.finance_vault.model.user.User;
-import com.finance_vault.finance_vault.repository.user.UserRepository;
+import com.finance_vault.finance_vault.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

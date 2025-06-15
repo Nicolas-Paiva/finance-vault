@@ -5,7 +5,7 @@ import com.finance_vault.finance_vault.dto.transaction.TransactionResponse;
 import com.finance_vault.finance_vault.exception.InvalidTransactionException;
 import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
-import com.finance_vault.finance_vault.repository.user.TransactionRepository;
+import com.finance_vault.finance_vault.repository.TransactionRepository;
 import com.finance_vault.finance_vault.service.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

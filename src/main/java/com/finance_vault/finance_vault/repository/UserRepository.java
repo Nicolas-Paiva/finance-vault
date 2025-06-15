@@ -1,4 +1,4 @@
-package com.finance_vault.finance_vault.repository.user;
+package com.finance_vault.finance_vault.repository;
 
 import com.finance_vault.finance_vault.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;

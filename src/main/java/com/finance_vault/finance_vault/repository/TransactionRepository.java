@@ -1,7 +1,9 @@
-package com.finance_vault.finance_vault.repository.user;
+package com.finance_vault.finance_vault.repository;
 
 import com.finance_vault.finance_vault.model.transaction.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 }

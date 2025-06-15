@@ -6,7 +6,7 @@ import com.finance_vault.finance_vault.dto.auth.UserRegistrationRequest;
 import com.finance_vault.finance_vault.exception.InvalidRegistrationException;
 import com.finance_vault.finance_vault.exception.InvalidEmailOrPassword;
 import com.finance_vault.finance_vault.model.user.User;
-import com.finance_vault.finance_vault.repository.user.UserRepository;
+import com.finance_vault.finance_vault.repository.UserRepository;
 import com.finance_vault.finance_vault.security.jwt.JWTService;
 import com.finance_vault.finance_vault.utils.Utils;
 import lombok.RequiredArgsConstructor;
