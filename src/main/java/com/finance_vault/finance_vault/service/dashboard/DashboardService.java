@@ -5,6 +5,6 @@ import com.finance_vault.finance_vault.model.user.User;
 
 public interface DashboardService {
 
-    public DashboardDataDTO getDashboardData(User user);
+    DashboardDataDTO getDashboardData(User user);
 
 }

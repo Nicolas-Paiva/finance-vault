@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class TransactionDTO {
+public class TransactionRequest {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")

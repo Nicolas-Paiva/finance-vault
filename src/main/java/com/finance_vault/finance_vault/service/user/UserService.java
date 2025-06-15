@@ -1,10 +1,11 @@
 package com.finance_vault.finance_vault.service.user;
 
 import com.finance_vault.finance_vault.model.user.User;
-import org.springframework.security.core.Authentication;
+
+import java.util.Optional;
 
 public interface UserService {
 
-    public User getUserFromAuthentication(Authentication authentication);
+    Optional<User> getUserFromEmail(String email);
 
 }

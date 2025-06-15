@@ -1,6 +1,7 @@
 package com.finance_vault.finance_vault.controller.dashboard;
 
 import com.finance_vault.finance_vault.dto.dashboard.DashboardDataDTO;
+import com.finance_vault.finance_vault.exception.UserNotFoundException;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.service.dashboard.DashboardService;
 import com.finance_vault.finance_vault.service.user.UserService;
@@ -35,7 +36,7 @@ public class DashboardController {
      */
     @GetMapping("/dashboard")
     public ResponseEntity<?> getSummary(Authentication authentication) {
-        User user = userService.getUserFromAuthentication(authentication);
+        User user = userService.getUserFromEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
         DashboardDataDTO dashboardDataDTO = dashboardService.getDashboardData(user);
 
         return ResponseEntity.ok(dashboardDataDTO);

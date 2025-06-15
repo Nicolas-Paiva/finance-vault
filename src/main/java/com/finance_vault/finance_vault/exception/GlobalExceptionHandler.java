@@ -4,6 +4,7 @@ import com.finance_vault.finance_vault.dto.error.ErrorResponse;
 import com.finance_vault.finance_vault.dto.auth.RegistrationResponse;
 import com.finance_vault.finance_vault.dto.auth.LoginErrorResponse;
 import com.finance_vault.finance_vault.dto.auth.LoginResponse;
+import com.finance_vault.finance_vault.dto.transaction.TransactionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -60,10 +61,19 @@ public class GlobalExceptionHandler {
     }
 
 
+    /**
+     * Handles the case where the user does not exist
+     */
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<?> handleUserNotFound(UserNotFoundException e) {
         ErrorResponse errorBody = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value(), LocalDateTime.now());
         return new ResponseEntity<>(errorBody, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(InvalidTransactionException.class)
+    public ResponseEntity<TransactionResponse> handleInvalidTransaction(InvalidTransactionException e) {
+        return ResponseEntity.badRequest().body(TransactionResponse.failed(e.getMessage()));
     }
 
 }
