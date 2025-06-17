@@ -1,0 +1,49 @@
+package com.finance_vault.finance_vault.service.authentication;
+
+import com.finance_vault.finance_vault.dto.auth.RegistrationResponse;
+import com.finance_vault.finance_vault.dto.auth.UserRegistrationRequest;
+import com.finance_vault.finance_vault.model.user.User;
+import com.finance_vault.finance_vault.repository.UserRepository;
+import com.finance_vault.finance_vault.utils.Utils;
+import org.assertj.core.api.Assertions;
+import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Optional;
+
+import static org.mockito.Mockito.when;
+
+@RunWith(SpringRunner.class)
+@ExtendWith(MockitoExtension.class)
+public class AuthenticationServiceTests {
+
+    @Mock
+    private UserRepository userRepository;
+
+    @InjectMocks
+    private AuthenticationService authenticationService;
+
+    @Test
+    public void AuthService_RegisterUser() {
+        UserRegistrationRequest request = new UserRegistrationRequest();
+        request.setName("Nicolas");
+        request.setEmail("abc@abc.com");
+        request.setPassword("N1234567.");
+        request.setName("Nicolas");
+
+
+        when(userRepository.findByEmail("abc@abc.com")).thenReturn(Optional.empty());
+        when(userRepository.save(Mockito.any(User.class))).thenReturn(null);
+
+        RegistrationResponse response = authenticationService.register(request);
+
+        Assertions.assertThat(response.isCreated()).isEqualTo(true);
+    }
+
+}

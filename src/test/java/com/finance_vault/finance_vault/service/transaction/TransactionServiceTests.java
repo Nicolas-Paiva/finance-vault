@@ -70,6 +70,7 @@ public class TransactionServiceTests {
         when(userService.getUserFromEmail(receiver.getEmail())).thenReturn(Optional.of(receiver));
         when(transactionRepository.save(Mockito.any(Transaction.class))).thenReturn(null);
 
+        // Act
         transactionService.createTransaction(transaction, sender);
 
         // Assert
