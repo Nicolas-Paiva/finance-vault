@@ -5,6 +5,7 @@ import com.finance_vault.finance_vault.dto.auth.LoginSuccessResponse;
 import com.finance_vault.finance_vault.dto.auth.UserRegistrationRequest;
 import com.finance_vault.finance_vault.exception.InvalidRegistrationException;
 import com.finance_vault.finance_vault.exception.InvalidEmailOrPassword;
+import com.finance_vault.finance_vault.model.user.Currency;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.UserRepository;
 import com.finance_vault.finance_vault.security.jwt.JWTService;
@@ -34,28 +35,48 @@ public class AuthenticationService {
 
 
     public RegistrationResponse register(UserRegistrationRequest userRegistrationRequest) {
+        String email = userRegistrationRequest.getEmail();
+        String password = userRegistrationRequest.getPassword();
+        String currency = userRegistrationRequest.getCurrency();
+
 
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
 
-        if (!userRegistrationRequest.getEmail().matches(emailRegex)) {
+        // Checks whether the email provided has the right format
+        if (!email.matches(emailRegex)) {
             throw InvalidRegistrationException.invalidEmail();
         }
 
         // Checks whether the username already exists
-        if (userRepository.findByEmail(userRegistrationRequest.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(email).isPresent()) {
             throw InvalidRegistrationException.userEmailAlreadyExists();
         }
 
         // Checks whether the password is valid
-        if (!Utils.isPasswordValid(userRegistrationRequest.getPassword())) {
+        if (!Utils.isPasswordValid(password)) {
             throw InvalidRegistrationException.invalidPassword();
         }
 
+        if (!isValidCurrency(currency)) {
+            throw  InvalidRegistrationException.invalidCurrency();
+        }
+
+
         // Proceeds to register the user
-        userRegistrationRequest.setPassword(passwordEncoder.encode(userRegistrationRequest.getPassword()));
+        userRegistrationRequest.setPassword(passwordEncoder.encode(password));
         userRepository.save(UserRegistrationRequest.toUser(userRegistrationRequest));
 
         return RegistrationResponse.success(userRegistrationRequest);
+    }
+
+
+    public boolean isValidCurrency(String currencyStr) {
+        for (Currency currency : Currency.values()) {
+            if (currency.name().equalsIgnoreCase(currencyStr)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 

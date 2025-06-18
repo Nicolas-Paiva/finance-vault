@@ -51,12 +51,16 @@ public class User {
     @OneToMany(mappedBy = "receiver")
     private List<Transaction> receivedTransactions;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Currency currency;
+
     private LocalDateTime createdAt;
 
 
     @PrePersist
     public void prePersist() {
-        this.balance = 0;
+        this.balance = 1000;
         this.createdAt = LocalDateTime.now();
     }
 

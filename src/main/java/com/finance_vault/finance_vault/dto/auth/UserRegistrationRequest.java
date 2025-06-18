@@ -1,8 +1,10 @@
 package com.finance_vault.finance_vault.dto.auth;
 
+import com.finance_vault.finance_vault.model.user.Currency;
 import com.finance_vault.finance_vault.model.user.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,13 +38,27 @@ public class UserRegistrationRequest {
     @Size(min = 3, message = "Name must have at least three characters")
     private String lastName;
 
+    @NotBlank
+    @Size(min = 3, max = 3)
+    private String currency;
+
 
     public static User toUser(UserRegistrationRequest userRegistrationRequest) {
+        Currency currency = null;
+
+        for (Currency curr : Currency.values()) {
+            if (curr.name().matches(userRegistrationRequest.getCurrency())) {
+                currency = curr;
+            }
+        }
+
         return User.builder()
                 .email(userRegistrationRequest.getEmail())
                 .password(userRegistrationRequest.getPassword())
                 .name(userRegistrationRequest.getName())
                 .lastName(userRegistrationRequest.getLastName())
+                .balance(1000)
+                .currency(currency)
                 .build();
     }
 

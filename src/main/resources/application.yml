@@ -5,9 +5,9 @@ server:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/finance-vault
+    url: jdbc:postgresql://localhost:5433/finance_vault
     username: postgres
-    password: password
+    password: postgres
     driver-class-name: org.postgresql.Driver
 
   jpa:

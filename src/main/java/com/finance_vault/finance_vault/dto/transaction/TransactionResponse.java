@@ -22,7 +22,7 @@ public class TransactionResponse {
     public static TransactionResponse success() {
         return TransactionResponse.builder()
                 .success(true)
-                .message("Transaction successful!")
+                .message("Transaction successful")
                 .timestamp(LocalDateTime.now())
                 .build();
     }

@@ -22,4 +22,8 @@ public class InvalidRegistrationException extends RuntimeException {
         return new InvalidRegistrationException("Invalid email format");
     }
 
+    public static InvalidRegistrationException invalidCurrency() {
+        return new InvalidRegistrationException("Please provide a supported currency");
+    }
+
 }

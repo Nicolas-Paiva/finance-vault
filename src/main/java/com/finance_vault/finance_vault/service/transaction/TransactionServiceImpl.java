@@ -1,7 +1,9 @@
 package com.finance_vault.finance_vault.service.transaction;
 
+import com.finance_vault.finance_vault.dto.PaginatedResponse;
 import com.finance_vault.finance_vault.dto.transaction.TransactionRequest;
 import com.finance_vault.finance_vault.dto.transaction.TransactionResponse;
+import com.finance_vault.finance_vault.dto.transaction.TransactionView;
 import com.finance_vault.finance_vault.exception.InvalidTransactionException;
 import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
@@ -9,6 +11,10 @@ import com.finance_vault.finance_vault.repository.TransactionRepository;
 import com.finance_vault.finance_vault.service.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +25,17 @@ public class TransactionServiceImpl implements TransactionService{
 
     private final UserService userService;
 
+
+    /**
+     *
+     * Creates a transaction between two users.
+     * A transaction is only allowed if the sender has
+     * enough funds and provide a correct email address
+     * for the receiver.
+     *
+     * If the transaction is successful, a TransactionResponse with
+     * success equal to true is sent to the client.
+     */
     @Override
     @Transactional
     public TransactionResponse createTransaction(TransactionRequest transactionRequest, User user) {
@@ -65,6 +82,34 @@ public class TransactionServiceImpl implements TransactionService{
 
 
         return TransactionResponse.success();
+    }
+
+
+    @Override
+    public PaginatedResponse<TransactionView> getAllTransactions(int page, int size, User user) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Page<TransactionView> transactions = transactionRepository.findAllByUser(user, pageable).map((transaction) -> {
+
+            if (transaction.getSender().getEmail().equals(user.getEmail())) {
+                return TransactionView.toWithdrawal(transaction);
+            }
+
+            return TransactionView.toDeposit(transaction);
+        });
+
+        return getPaginatedTransactions(transactions);
+    }
+
+    private PaginatedResponse<TransactionView> getPaginatedTransactions(Page<TransactionView> page) {
+        return new PaginatedResponse<>(
+                page.getContent(),
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.getTotalPages(),
+                page.isLast()
+        );
     }
 
 }
