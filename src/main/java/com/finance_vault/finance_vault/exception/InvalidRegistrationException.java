@@ -14,7 +14,12 @@ public class InvalidRegistrationException extends RuntimeException {
     }
 
     public static InvalidRegistrationException invalidPassword() {
-        return new InvalidRegistrationException("Password must contain at least 8 characters, 1 uppercase letter and one symbol (#,._@) ");
+        return new InvalidRegistrationException("Password must contain at least 8 characters," +
+                " 1 uppercase letter and one symbol (#,._@)");
+    }
+
+    public static InvalidRegistrationException invalidEmail() {
+        return new InvalidRegistrationException("Invalid email format");
     }
 
 }

@@ -2,9 +2,9 @@ package com.finance_vault.finance_vault.service.authentication;
 
 import com.finance_vault.finance_vault.dto.auth.RegistrationResponse;
 import com.finance_vault.finance_vault.dto.auth.UserRegistrationRequest;
+import com.finance_vault.finance_vault.exception.InvalidRegistrationException;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.UserRepository;
-import com.finance_vault.finance_vault.utils.Utils;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +17,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Optional;
 
+import org.assertj.core.api.Assertions;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -38,12 +40,54 @@ public class AuthenticationServiceTests {
         request.setName("Nicolas");
 
 
-        when(userRepository.findByEmail("abc@abc.com")).thenReturn(Optional.empty());
+        // Mocks the methods called by userRepository
+        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
         when(userRepository.save(Mockito.any(User.class))).thenReturn(null);
 
         RegistrationResponse response = authenticationService.register(request);
 
         Assertions.assertThat(response.isCreated()).isEqualTo(true);
+    }
+
+
+    @Test
+    public void AuthService_ShouldThrowException_WhenEmailIsNotValid() {
+
+        // Arrange
+        UserRegistrationRequest request = new UserRegistrationRequest();
+        request.setName("Nicolas");
+        request.setEmail("abcasdas");
+        request.setPassword("N1234567.");
+        request.setName("Nicolas");
+
+
+        // Act & Assert
+        InvalidRegistrationException exception = assertThrows(InvalidRegistrationException.class,
+                () -> authenticationService.register(request));
+
+        Assertions.assertThat(exception.getMessage())
+                .contains("Invalid email format");
+    }
+
+    @Test
+    public void AuthService_ShouldThrowException_WhenPaswordIsNotValid() {
+
+        // Arrange
+        UserRegistrationRequest request = new UserRegistrationRequest();
+        request.setName("Nicolas");
+        request.setEmail("abc@abc.com");
+        request.setPassword("12345678");
+        request.setName("Nicolas");
+
+
+        // Act & Assert
+        InvalidRegistrationException exception = assertThrows(InvalidRegistrationException.class,
+                () -> authenticationService.register(request));
+
+        Assertions.assertThat(exception.getMessage())
+                .contains("Password must contain at least 8 characters," +
+                        " 1 uppercase letter and one symbol (#,._@)");
+
     }
 
 }

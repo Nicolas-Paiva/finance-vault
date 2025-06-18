@@ -35,6 +35,12 @@ public class AuthenticationService {
 
     public RegistrationResponse register(UserRegistrationRequest userRegistrationRequest) {
 
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+
+        if (!userRegistrationRequest.getEmail().matches(emailRegex)) {
+            throw InvalidRegistrationException.invalidEmail();
+        }
+
         // Checks whether the username already exists
         if (userRepository.findByEmail(userRegistrationRequest.getEmail()).isPresent()) {
             throw InvalidRegistrationException.userEmailAlreadyExists();
