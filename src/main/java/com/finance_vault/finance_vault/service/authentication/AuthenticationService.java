@@ -70,6 +70,7 @@ public class AuthenticationService {
     }
 
 
+    // Checks the provided currency against the valid ones
     public boolean isValidCurrency(String currencyStr) {
         for (Currency currency : Currency.values()) {
             if (currency.name().equalsIgnoreCase(currencyStr)) {

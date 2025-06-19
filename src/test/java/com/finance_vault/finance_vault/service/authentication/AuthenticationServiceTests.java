@@ -38,6 +38,7 @@ public class AuthenticationServiceTests {
         request.setEmail("abc@abc.com");
         request.setPassword("N1234567.");
         request.setName("Nicolas");
+        request.setCurrency("EUR");
 
 
         // Mocks the methods called by userRepository
@@ -71,7 +72,6 @@ public class AuthenticationServiceTests {
 
     @Test
     public void AuthService_ShouldThrowException_WhenPaswordIsNotValid() {
-
         // Arrange
         UserRegistrationRequest request = new UserRegistrationRequest();
         request.setName("Nicolas");
@@ -87,6 +87,27 @@ public class AuthenticationServiceTests {
         Assertions.assertThat(exception.getMessage())
                 .contains("Password must contain at least 8 characters," +
                         " 1 uppercase letter and one symbol (#,._@)");
+
+    }
+
+
+    @Test
+    public void AuthService_SholdThrowException_WhenCurrencyIsNotValid() {
+        // Arrange
+        UserRegistrationRequest request = new UserRegistrationRequest();
+        request.setName("Nicolas");
+        request.setEmail("abc@abc.com");
+        request.setPassword("A12345678.");
+        request.setName("Nicolas");
+        request.setCurrency("ABC");
+
+
+        // Act & Assert
+        InvalidRegistrationException exception = assertThrows(InvalidRegistrationException.class,
+                () -> authenticationService.register(request));
+
+        Assertions.assertThat(exception.getMessage())
+                .contains("Please provide a supported currency");
 
     }
 
