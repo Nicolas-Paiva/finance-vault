@@ -1,5 +1,6 @@
 package com.finance_vault.finance_vault.controller.auth;
 
+import com.finance_vault.finance_vault.dto.auth.LoginRequest;
 import com.finance_vault.finance_vault.dto.auth.LoginSuccessResponse;
 import com.finance_vault.finance_vault.dto.auth.RegistrationResponse;
 import com.finance_vault.finance_vault.dto.auth.UserRegistrationRequest;
@@ -44,8 +45,8 @@ public class AuthController {
      * to the client
      */
     @PostMapping("/auth/login")
-    public ResponseEntity<LoginSuccessResponse> login(@RequestBody UserRegistrationRequest userRegistrationRequest) {
-        return ResponseEntity.ok(authenticationService.login(userRegistrationRequest));
+    public ResponseEntity<LoginSuccessResponse> login(@RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(authenticationService.login(loginRequest));
     }
 
 }

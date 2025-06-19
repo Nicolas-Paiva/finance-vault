@@ -17,7 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Optional;
 
-import org.assertj.core.api.Assertions;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -32,7 +32,8 @@ public class AuthenticationServiceTests {
     private AuthenticationService authenticationService;
 
     @Test
-    public void AuthService_RegisterUser() {
+    public void AuthService_RegisterUser_WhenDataIsValid() {
+        // Arrange
         UserRegistrationRequest request = new UserRegistrationRequest();
         request.setName("Nicolas");
         request.setEmail("abc@abc.com");
@@ -45,14 +46,16 @@ public class AuthenticationServiceTests {
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
         when(userRepository.save(Mockito.any(User.class))).thenReturn(null);
 
+        // Act
         RegistrationResponse response = authenticationService.register(request);
 
+        // Assert
         Assertions.assertThat(response.isCreated()).isEqualTo(true);
     }
 
 
     @Test
-    public void AuthService_ShouldThrowException_WhenEmailIsNotValid() {
+    public void Registration_ShouldThrowException_WhenEmailIsNotValid() {
 
         // Arrange
         UserRegistrationRequest request = new UserRegistrationRequest();
@@ -71,7 +74,7 @@ public class AuthenticationServiceTests {
     }
 
     @Test
-    public void AuthService_ShouldThrowException_WhenPaswordIsNotValid() {
+    public void Registration_ShouldThrowException_WhenPaswordIsNotValid() {
         // Arrange
         UserRegistrationRequest request = new UserRegistrationRequest();
         request.setName("Nicolas");
@@ -92,7 +95,7 @@ public class AuthenticationServiceTests {
 
 
     @Test
-    public void AuthService_SholdThrowException_WhenCurrencyIsNotValid() {
+    public void Registration_ShouldThrowException_WhenCurrencyIsNotValid() {
         // Arrange
         UserRegistrationRequest request = new UserRegistrationRequest();
         request.setName("Nicolas");

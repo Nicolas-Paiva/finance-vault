@@ -1,9 +1,9 @@
-package com.finance_vault.finance_vault.controller.dashboard;
+package com.finance_vault.finance_vault.controller.summary;
 
-import com.finance_vault.finance_vault.dto.dashboard.DashboardDataDTO;
+import com.finance_vault.finance_vault.dto.summary.SummaryDTO;
 import com.finance_vault.finance_vault.exception.UserNotFoundException;
 import com.finance_vault.finance_vault.model.user.User;
-import com.finance_vault.finance_vault.service.dashboard.DashboardService;
+import com.finance_vault.finance_vault.service.summary.SummaryService;
 import com.finance_vault.finance_vault.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
-public class DashboardController {
+public class SummaryController {
 
     // TODO: Create interfaces and implement them for other services
 
     private final UserService userService;
 
-    private final DashboardService dashboardService;
+    private final SummaryService summaryService;
 
 
     /**
@@ -34,12 +34,12 @@ public class DashboardController {
      * If the user does not exist, a UserNotFoundException is thrown,
      * returning the message to the client.
      */
-    @GetMapping("/dashboard")
+    @GetMapping("/summary")
     public ResponseEntity<?> getSummary(Authentication authentication) {
         User user = userService.getUserFromEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        DashboardDataDTO dashboardDataDTO = dashboardService.getDashboardData(user);
+        SummaryDTO summaryDTO = summaryService.getDashboardData(user);
 
-        return ResponseEntity.ok(dashboardDataDTO);
+        return ResponseEntity.ok(summaryDTO);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.finance_vault.finance_vault.service.authentication;
 
+import com.finance_vault.finance_vault.dto.auth.LoginRequest;
 import com.finance_vault.finance_vault.dto.auth.RegistrationResponse;
 import com.finance_vault.finance_vault.dto.auth.LoginSuccessResponse;
 import com.finance_vault.finance_vault.dto.auth.UserRegistrationRequest;
@@ -89,10 +90,10 @@ public class AuthenticationService {
      * exception is thrown, which causes a LoginErrorResponse to be sent
      * to the user.
      */
-    public LoginSuccessResponse login(UserRegistrationRequest userRegistrationRequest) {
+    public LoginSuccessResponse login(LoginRequest loginRequest) {
         Authentication authentication;
 
-        User user = UserRegistrationRequest.toUser(userRegistrationRequest);
+        User user = LoginRequest.toUser(loginRequest);
 
         // Tries to authenticate the user
         try {
