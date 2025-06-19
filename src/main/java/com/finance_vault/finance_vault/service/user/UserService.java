@@ -8,4 +8,7 @@ public interface UserService {
 
     Optional<User> getUserFromEmail(String email);
 
+    void changeUserEmail(User user, String newEmail);
+
+    void changeUserPassword(User user, String newPassword);
 }

@@ -13,4 +13,10 @@ public class Utils {
         return password.matches(regex);
     }
 
+    public static boolean isEmailFormatValid(String email) {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+
+        return email.matches(emailRegex);
+    }
+
 }

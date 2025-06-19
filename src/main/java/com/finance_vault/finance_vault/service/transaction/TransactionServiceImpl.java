@@ -89,6 +89,10 @@ public class TransactionServiceImpl implements TransactionService{
     }
 
 
+    /**
+     * Returns all the users transactions sorted by creation date.
+     * The transactions are paginated.
+     */
     @Override
     public PaginatedResponse<TransactionView> getAllTransactions(int page, int size, User user) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
@@ -105,6 +109,12 @@ public class TransactionServiceImpl implements TransactionService{
         return getPaginatedTransactions(transactions);
     }
 
+
+    /**
+     * Returns a paginated response from a Page
+     * @param page
+     * @return
+     */
     private PaginatedResponse<TransactionView> getPaginatedTransactions(Page<TransactionView> page) {
         return new PaginatedResponse<>(
                 page.getContent(),

@@ -4,6 +4,7 @@ import com.finance_vault.finance_vault.dto.error.ErrorResponse;
 import com.finance_vault.finance_vault.dto.auth.RegistrationResponse;
 import com.finance_vault.finance_vault.dto.auth.LoginErrorResponse;
 import com.finance_vault.finance_vault.dto.auth.LoginResponse;
+import com.finance_vault.finance_vault.dto.profile.ProfileDataChangeResponse;
 import com.finance_vault.finance_vault.dto.transaction.TransactionResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +56,7 @@ public class GlobalExceptionHandler {
      * Handles the case where the user tries to log in
      * but there is no user or the credentials are incorrect
      */
-    @ExceptionHandler(InvalidEmailOrPassword.class)
+    @ExceptionHandler(InvalidEmailOrPasswordException.class)
     public ResponseEntity<LoginResponse> handleInvalidEmailOrPassword() {
         return ResponseEntity.badRequest().body(new LoginErrorResponse());
     }
@@ -71,9 +72,17 @@ public class GlobalExceptionHandler {
     }
 
 
+    /**
+     * handles the case where the transaction is invalid
+     */
     @ExceptionHandler(InvalidTransactionException.class)
     public ResponseEntity<TransactionResponse> handleInvalidTransaction(InvalidTransactionException e) {
         return ResponseEntity.badRequest().body(TransactionResponse.failed(e.getMessage()));
     }
 
+
+    @ExceptionHandler(InvalidProfileChangeException.class)
+    public ResponseEntity<ProfileDataChangeResponse> handleInvalidDataChange(InvalidProfileChangeException e) {
+        return ResponseEntity.badRequest().body(new ProfileDataChangeResponse(false, e.getMessage()));
+    }
 }

@@ -5,7 +5,7 @@ import com.finance_vault.finance_vault.dto.auth.RegistrationResponse;
 import com.finance_vault.finance_vault.dto.auth.LoginSuccessResponse;
 import com.finance_vault.finance_vault.dto.auth.UserRegistrationRequest;
 import com.finance_vault.finance_vault.exception.InvalidRegistrationException;
-import com.finance_vault.finance_vault.exception.InvalidEmailOrPassword;
+import com.finance_vault.finance_vault.exception.InvalidEmailOrPasswordException;
 import com.finance_vault.finance_vault.model.user.Currency;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.UserRepository;
@@ -41,10 +41,7 @@ public class AuthenticationService {
         String currency = userRegistrationRequest.getCurrency();
 
 
-        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-
-        // Checks whether the email provided has the right format
-        if (!email.matches(emailRegex)) {
+        if (!Utils.isEmailFormatValid(email)) {
             throw InvalidRegistrationException.invalidEmail();
         }
 
@@ -101,7 +98,7 @@ public class AuthenticationService {
                             .authenticate(new UsernamePasswordAuthenticationToken
                                     (user.getEmail(), user.getPassword()));
         } catch(Exception e) {
-            throw new InvalidEmailOrPassword();
+            throw new InvalidEmailOrPasswordException();
         }
 
         if (authentication.isAuthenticated()) {
@@ -109,7 +106,7 @@ public class AuthenticationService {
             return new LoginSuccessResponse(jwt);
         }
 
-        throw new InvalidEmailOrPassword();
+        throw new InvalidEmailOrPasswordException();
     }
 
 }
