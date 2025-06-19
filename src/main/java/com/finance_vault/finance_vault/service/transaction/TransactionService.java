@@ -16,4 +16,8 @@ public interface TransactionService {
 
     PaginatedResponse<TransactionView> getAllTransactions(int page, int size, User user);
 
+
+    float getMonthlyDepositsTotal(User user);
+
+    float getMonthlyWithdrawalsTotal(User user);
 }

@@ -5,6 +5,6 @@ import com.finance_vault.finance_vault.model.user.User;
 
 public interface SummaryService {
 
-    SummaryDTO getDashboardData(User user);
+    SummaryDTO getSummaryData(User user);
 
 }

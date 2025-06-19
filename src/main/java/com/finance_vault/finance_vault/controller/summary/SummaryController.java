@@ -37,7 +37,7 @@ public class SummaryController {
     @GetMapping("/summary")
     public ResponseEntity<?> getSummary(Authentication authentication) {
         User user = userService.getUserFromEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        SummaryDTO summaryDTO = summaryService.getDashboardData(user);
+        SummaryDTO summaryDTO = summaryService.getSummaryData(user);
 
         return ResponseEntity.ok(summaryDTO);
     }

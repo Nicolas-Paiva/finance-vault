@@ -6,6 +6,7 @@ import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.TransactionRepository;
 import com.finance_vault.finance_vault.service.user.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,12 +17,15 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
 
+@Slf4j
 @RunWith(SpringRunner.class)
 @ExtendWith(MockitoExtension.class)
 public class TransactionServiceTests {

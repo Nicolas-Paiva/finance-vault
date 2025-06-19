@@ -17,6 +17,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService{
@@ -110,6 +114,26 @@ public class TransactionServiceImpl implements TransactionService{
                 page.getTotalPages(),
                 page.isLast()
         );
+    }
+
+
+    public float getMonthlyDepositsTotal(User user) {
+        List<Transaction> monthlyDeposits = transactionRepository.findAllMonthlyDeposits(user,
+                LocalDate.now().withDayOfMonth(1).atStartOfDay(),LocalDateTime.now());
+
+        return monthlyDeposits.stream()
+                .map(Transaction::getAmount)
+                .reduce(0F, Float::sum);
+    }
+
+
+    public float getMonthlyWithdrawalsTotal(User user) {
+        List<Transaction> monthlyWithdrawals = transactionRepository.findAllMonthlyWithdrawals(user,
+                LocalDate.now().withDayOfMonth(1).atStartOfDay(),LocalDateTime.now());
+
+        return monthlyWithdrawals.stream()
+                .map(Transaction::getAmount)
+                .reduce(0F, Float::sum);
     }
 
 }

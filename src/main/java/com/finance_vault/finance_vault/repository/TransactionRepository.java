@@ -10,15 +10,25 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-    @Query("SELECT t FROM transactions t WHERE t.sender = :user OR t.receiver = :user")
+    @Query("SELECT t FROM Transaction t WHERE t.sender = :user OR t.receiver = :user")
     Page<Transaction> findAllByUser(@Param("user") User user, Pageable pageable);
 
 
+    @Query("SELECT t FROM Transaction t WHERE t.receiver = :user AND t.createdAt BETWEEN :startOfMonth AND :currentDay")
+    List<Transaction> findAllMonthlyDeposits(@Param("user") User user,
+                                             @Param("startOfMonth") LocalDateTime startOfMonth,
+                                             @Param("currentDay") LocalDateTime currentDay);
 
+    @Query("SELECT t FROM Transaction t WHERE t.sender = :user AND t.createdAt BETWEEN :startOfMonth AND :currentDay")
+    List<Transaction> findAllMonthlyWithdrawals(@Param("user") User user,
+                                             @Param("startOfMonth") LocalDateTime startOfMonth,
+                                             @Param("currentDay") LocalDateTime currentDay);
 
 }
