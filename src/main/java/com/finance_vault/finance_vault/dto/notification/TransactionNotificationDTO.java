@@ -18,10 +18,13 @@ public class TransactionNotificationDTO {
 
     private LocalDateTime createdAt;
 
+    private boolean seen;
+
     public static TransactionNotificationDTO toDTO(TransactionNotification notification) {
         return new TransactionNotificationDTO(notification.getMessage(),
                 notification.getAmount(),
-                notification.getCreatedAt());
+                notification.getCreatedAt(),
+                notification.isSeen());
     }
 
 }

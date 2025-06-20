@@ -10,6 +10,8 @@ public interface NotificationService {
 
     List<TransactionNotificationDTO> getAllNotifications(User user);
 
+    int getNumberOfUnseenNotifications(User user);
+
     void addTransactionNotification(Transaction transaction);
 
 }

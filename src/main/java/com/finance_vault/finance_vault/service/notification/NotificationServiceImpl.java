@@ -19,7 +19,29 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public List<TransactionNotificationDTO> getAllNotifications(User user) {
-        return notificationRepository.findByUser(user).stream().map(TransactionNotificationDTO::toDTO).toList();
+        List<TransactionNotification> notifications =
+                notificationRepository.findByUserOrderByCreatedAtDesc(user);
+        List<TransactionNotificationDTO> notificationDTOS = notifications.stream()
+                .map(TransactionNotificationDTO::toDTO).toList();
+
+        for (TransactionNotification notification : notifications) {
+
+            if (notification.isSeen()) {
+                break;
+            }
+
+            notification.setSeen(true);
+        }
+
+        notificationRepository.saveAll(notifications);
+
+        return notificationDTOS;
+    }
+
+
+    @Override
+    public int getNumberOfUnseenNotifications(User user) {
+        return notificationRepository.findByUserAndSeen(user, false).size();
     }
 
 

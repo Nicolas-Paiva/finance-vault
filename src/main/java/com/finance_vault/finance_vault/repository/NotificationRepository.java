@@ -11,4 +11,8 @@ import java.util.List;
 public interface NotificationRepository extends JpaRepository<TransactionNotification, Long> {
     List<TransactionNotification> findByUser(User user);
 
+    List<TransactionNotification> findByUserAndSeen(User user, boolean seen);
+
+    List<TransactionNotification> findByUserOrderByCreatedAtDesc(User user);
+
 }

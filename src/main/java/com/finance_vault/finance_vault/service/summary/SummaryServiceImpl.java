@@ -23,7 +23,7 @@ public class SummaryServiceImpl implements SummaryService {
                 .currency(user.getCurrency())
                 .monthlyDepositsTotal(transactionService.getMonthlyDepositsTotal(user))
                 .monthlyWithdrawalsTotal(transactionService.getMonthlyWithdrawalsTotal(user))
-                .notifications(notificationService.getAllNotifications(user))
+                .numberOfNotifications(notificationService.getNumberOfUnseenNotifications(user))
                 .build();
     }
 

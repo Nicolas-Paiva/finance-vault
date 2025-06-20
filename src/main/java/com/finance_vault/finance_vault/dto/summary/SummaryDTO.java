@@ -25,6 +25,6 @@ public class SummaryDTO {
 
     private float monthlyWithdrawalsTotal;
 
-    private List<TransactionNotificationDTO> notifications;
+    private int numberOfNotifications;
 
 }

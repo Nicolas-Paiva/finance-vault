@@ -41,6 +41,8 @@ public class TransactionNotification {
 
     private LocalDateTime createdAt;
 
+    private boolean seen;
+
     @JoinColumn(nullable = false)
     @ManyToOne
     private User user;
@@ -48,5 +50,6 @@ public class TransactionNotification {
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
+        this.seen = false;
     }
 }
