@@ -8,6 +8,7 @@ import com.finance_vault.finance_vault.exception.InvalidTransactionException;
 import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.TransactionRepository;
+import com.finance_vault.finance_vault.service.notification.NotificationService;
 import com.finance_vault.finance_vault.service.user.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,8 @@ public class TransactionServiceImpl implements TransactionService{
     private final TransactionRepository transactionRepository;
 
     private final UserService userService;
+
+    private final NotificationService notificationService;
 
 
     /**
@@ -83,6 +86,8 @@ public class TransactionServiceImpl implements TransactionService{
 
         receiver.setBalance(receiver.getBalance() + amount);
         receiver.getReceivedTransactions().add(transaction);
+        notificationService.addTransactionNotification(transaction);
+
 
 
         return TransactionResponse.success();
@@ -112,8 +117,6 @@ public class TransactionServiceImpl implements TransactionService{
 
     /**
      * Returns a paginated response from a Page
-     * @param page
-     * @return
      */
     private PaginatedResponse<TransactionView> getPaginatedTransactions(Page<TransactionView> page) {
         return new PaginatedResponse<>(
