@@ -1,5 +1,6 @@
 package com.finance_vault.finance_vault.model.user;
 
+import com.finance_vault.finance_vault.model.notification.TransactionNotification;
 import com.finance_vault.finance_vault.model.transaction.Transaction;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -55,6 +56,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Currency currency;
+
+    @OneToMany(mappedBy = "user")
+    private List<TransactionNotification> notifications;
 
     private LocalDateTime createdAt;
 
