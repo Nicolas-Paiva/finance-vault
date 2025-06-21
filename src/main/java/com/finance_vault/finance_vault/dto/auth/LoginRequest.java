@@ -17,6 +17,10 @@ public class LoginRequest {
     @NotBlank(message = "A password must be provided")
     private String password;
 
+
+    /**
+     * Converts a LoginRequest to a user
+     */
     public static User toUser(LoginRequest request) {
         return User.builder()
                 .email(request.getEmail())
