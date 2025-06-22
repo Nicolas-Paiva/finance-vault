@@ -1,6 +1,7 @@
 package com.finance_vault.finance_vault.security.config;
 
 import com.finance_vault.finance_vault.security.jwt.JWTFilter;
+import com.finance_vault.finance_vault.security.jwt.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +33,8 @@ public class SecurityConfig {
 
     private final JWTFilter jwtFilter;
 
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
     /**
      *  Defines the SecurityFilterChain,
      *  disabling csrf and making the session
@@ -40,12 +43,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        return http.csrf(AbstractHttpConfigurer::disable).cors(Customizer.withDefaults())
+        return http.csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers("/auth/**", "/swagger-ui/**", "/v3/**").permitAll()
+                        request.requestMatchers("/auth/**",
+                                        "/swagger-ui/**",
+                                        "/v3/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(handler -> handler.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

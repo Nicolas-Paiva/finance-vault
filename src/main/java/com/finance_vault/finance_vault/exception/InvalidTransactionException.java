@@ -8,7 +8,7 @@ public class InvalidTransactionException extends RuntimeException {
 
 
     public static InvalidTransactionException invalidAmount() {
-        return new InvalidTransactionException("Transaction amount should be positve");
+        return new InvalidTransactionException("Transaction amount should be positive");
     }
 
 
@@ -18,7 +18,7 @@ public class InvalidTransactionException extends RuntimeException {
 
 
     public static InvalidTransactionException senderDoesNotExist() {
-        return new InvalidTransactionException("Receiver does not exist");
+        return new InvalidTransactionException("Sender does not exist");
     }
 
 

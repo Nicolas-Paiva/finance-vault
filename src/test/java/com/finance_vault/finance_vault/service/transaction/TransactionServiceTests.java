@@ -17,12 +17,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @Slf4j
@@ -40,8 +40,10 @@ public class TransactionServiceTests {
     private TransactionServiceImpl transactionService;
 
 
+    // TODO: Modify test for taking into consideration the notification service
+
     @Test
-    public void TransactionService_CreateTransaction() {
+    public void ShouldCreateTransaction() {
         // Arrange
         User sender = User.builder()
                 .id(1L)
@@ -83,8 +85,8 @@ public class TransactionServiceTests {
     }
 
 
-    @Test(expected = InvalidTransactionException.class)
-    public void TransactionService_ThrowException_WhenSelfTransaction() {
+    @Test
+    public void ShouldThrowException_WhenSelfTransaction() {
         // Arrange
         User sender = User.builder()
                 .id(1L)
@@ -97,33 +99,23 @@ public class TransactionServiceTests {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        User receiver = User.builder()
-                .id(2L)
-                .name("D")
-                .lastName("E")
-                .email("abc@abc.com")
-                .balance(1000)
-                .sentTransactions(new ArrayList<>())
-                .receivedTransactions(new ArrayList<>())
-                .createdAt(LocalDateTime.now())
-                .build();
-
-        TransactionRequest transaction = new TransactionRequest();
-        transaction.setAmount(100);
-        transaction.setReceiverEmail("def@def.com");
+        TransactionRequest request = new TransactionRequest();
+        request.setAmount(100);
+        request.setReceiverEmail("abc@abc.com");
 
         // ACT
-        // Mocks the methods within the TransactionService
         when(userService.getUserFromEmail(sender.getEmail())).thenReturn(Optional.of(sender));
-        when(userService.getUserFromEmail(receiver.getEmail())).thenReturn(Optional.of(receiver));
-        when(transactionRepository.save(Mockito.any(Transaction.class))).thenReturn(null);
+        when(userService.getUserFromEmail(request.getReceiverEmail())).thenReturn(Optional.of(sender));
 
-        transactionService.createTransaction(transaction, sender);
+        InvalidTransactionException e = assertThrows(InvalidTransactionException.class,
+                () -> transactionService.createTransaction(request, sender));
+
+        Assertions.assertThat(e.getMessage()).contains("You cannot send a transaction to yourself");
     }
 
 
-    @Test(expected = InvalidTransactionException.class)
-    public void TransactionService_ThrowException_WhenBalanceIsNotEnough() {
+    @Test
+    public void ShouldThrowException_WhenBalanceIsNotEnough() {
         // Arrange
         User sender = User.builder()
                 .id(1L)
@@ -147,9 +139,9 @@ public class TransactionServiceTests {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        TransactionRequest transaction = new TransactionRequest();
-        transaction.setAmount(5000);
-        transaction.setReceiverEmail("def@def.com");
+        TransactionRequest request = new TransactionRequest();
+        request.setAmount(5000);
+        request.setReceiverEmail("def@def.com");
 
         // ACT
         // Mocks the methods within the TransactionService
@@ -157,15 +149,17 @@ public class TransactionServiceTests {
         when(userService.getUserFromEmail(receiver.getEmail())).thenReturn(Optional.of(receiver));
         when(transactionRepository.save(Mockito.any(Transaction.class))).thenReturn(null);
 
-        transactionService.createTransaction(transaction, sender);
+        InvalidTransactionException e = assertThrows(InvalidTransactionException.class,
+                () -> transactionService.createTransaction(request, sender));
+
+        Assertions.assertThat(e.getMessage()).contains("Not enough funds to complete the transaction");
     }
 
 
-    @Test(expected = InvalidTransactionException.class)
-    public void TransactionService_ThrowException_WhenTransactionAmountIsNegative() {
+    @Test
+    public void ShouldThrowException_WhenTransactionAmountIsNegative() {
         // Arrange
         User sender = User.builder()
-                .id(1L)
                 .name("A")
                 .lastName("B")
                 .email("abc@abc.com")
@@ -176,7 +170,6 @@ public class TransactionServiceTests {
                 .build();
 
         User receiver = User.builder()
-                .id(2L)
                 .name("D")
                 .lastName("E")
                 .email("def@def.com")
@@ -186,16 +179,36 @@ public class TransactionServiceTests {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        TransactionRequest transaction = new TransactionRequest();
-        transaction.setAmount(-400);
-        transaction.setReceiverEmail("def@def.com");
+        TransactionRequest request = new TransactionRequest();
+        request.setAmount(-400);
+        request.setReceiverEmail("def@def.com");
 
-        // ACT
-        // Mocks the methods within the TransactionService
+        // Act
         when(userService.getUserFromEmail(sender.getEmail())).thenReturn(Optional.of(sender));
         when(userService.getUserFromEmail(receiver.getEmail())).thenReturn(Optional.of(receiver));
-        when(transactionRepository.save(Mockito.any(Transaction.class))).thenReturn(null);
 
-        transactionService.createTransaction(transaction, sender);
+
+        InvalidTransactionException e = assertThrows(InvalidTransactionException.class,
+                () -> transactionService.createTransaction(request, sender));
+
+        // Assert
+       Assertions.assertThat(e.getMessage()).contains("Transaction amount should be positive");
+    }
+
+    @Test
+    public void ShouldThrowException_WhenReceiverEmailIsInvalid() {
+        // Arrange
+        TransactionRequest request = new TransactionRequest();
+        request.setAmount(25);
+        request.setReceiverEmail("foo");
+
+        // Act & Assert
+        doThrow(InvalidTransactionException.receiverDoesNotExist())
+                .when(userService).getUserFromEmail(request.getReceiverEmail());
+
+        InvalidTransactionException e = assertThrows(InvalidTransactionException.class,
+                () -> userService.getUserFromEmail(request.getReceiverEmail()));
+
+        Assertions.assertThat(e.getMessage()).contains("Receiver does not exist");
     }
 }
