@@ -7,11 +7,11 @@ import com.finance_vault.finance_vault.dto.transaction.TransactionView;
 import com.finance_vault.finance_vault.exception.UserNotFoundException;
 import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
+import com.finance_vault.finance_vault.repository.queryFilter.TransactionQueryFilter;
 import com.finance_vault.finance_vault.service.transaction.TransactionService;
 import com.finance_vault.finance_vault.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -37,14 +37,21 @@ public class TransactionController {
     }
 
     @GetMapping("/transactions")
-    public ResponseEntity<PaginatedResponse<TransactionView>> getAllTransactions(
+    public ResponseEntity<?> getAllTransactions(
+            @ModelAttribute TransactionQueryFilter filter,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "20") int size,
             Authentication authentication
             ) {
 
         User user = userService.getUserFromEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
-        PaginatedResponse<TransactionView> transactions = transactionService.getAllTransactions(page, size, user);
+
+        // Sets the user in the filter
+        filter.setUser(user);
+
+//        PaginatedResponse<TransactionView> transactions = transactionService.getAllTransactions(page, size, user);
+        PaginatedResponse<TransactionView> transactions = transactionService
+                .getFilteredTransactions(page, size, filter);
 
         return ResponseEntity.ok(transactions);
     }

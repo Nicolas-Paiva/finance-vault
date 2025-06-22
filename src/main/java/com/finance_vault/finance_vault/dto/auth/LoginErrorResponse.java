@@ -4,6 +4,10 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+/**
+ * Represents the error message the client will receive when
+ * the data provided for the login is not valid
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class LoginErrorResponse extends LoginResponse {

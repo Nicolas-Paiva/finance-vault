@@ -8,6 +8,8 @@ import com.finance_vault.finance_vault.exception.InvalidTransactionException;
 import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.TransactionRepository;
+import com.finance_vault.finance_vault.repository.queryFilter.TransactionQueryFilter;
+import com.finance_vault.finance_vault.repository.specification.TransactionSpec;
 import com.finance_vault.finance_vault.service.notification.NotificationService;
 import com.finance_vault.finance_vault.service.user.UserService;
 import jakarta.transaction.Transactional;
@@ -16,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -109,6 +112,26 @@ public class TransactionServiceImpl implements TransactionService{
             }
 
             return TransactionView.toDeposit(transaction);
+        });
+
+        return getPaginatedTransactions(transactions);
+    }
+
+
+    public PaginatedResponse<TransactionView> getFilteredTransactions(int page, int size, TransactionQueryFilter filter) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+
+        Specification<Transaction> spec = filter.toSpecification();
+
+        Page<TransactionView> transactions = transactionRepository.findAll(spec, pageable)
+                .map((transaction) -> {
+
+            if (transaction.getSender().getEmail().equals(filter.getUser().getEmail())) {
+                return TransactionView.toWithdrawal(transaction);
+            }
+
+            return TransactionView.toDeposit(transaction);
+
         });
 
         return getPaginatedTransactions(transactions);
