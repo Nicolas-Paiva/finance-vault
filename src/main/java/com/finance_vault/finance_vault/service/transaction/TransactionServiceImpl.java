@@ -27,7 +27,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class TransactionServiceImpl implements TransactionService{
+public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
 
@@ -37,12 +37,11 @@ public class TransactionServiceImpl implements TransactionService{
 
 
     /**
-     *
      * Creates a transaction between two users.
      * A transaction is only allowed if the sender has
      * enough funds and provide a correct email address
      * for the receiver.
-     *
+     * <p>
      * If the transaction is successful, a TransactionResponse with
      * success equal to true is sent to the client.
      */
@@ -52,12 +51,12 @@ public class TransactionServiceImpl implements TransactionService{
         float amount = transactionRequest.getAmount();
 
         // Check whether sender exists
-            User sender = userService.getUserFromEmail(user.getEmail())
-                    .orElseThrow(InvalidTransactionException::senderDoesNotExist);
+        User sender = userService.getUserFromEmail(user.getEmail())
+                .orElseThrow(InvalidTransactionException::senderDoesNotExist);
 
         // Check whether receiver exists
-            User receiver = userService.getUserFromEmail(transactionRequest.getReceiverEmail())
-                    .orElseThrow(InvalidTransactionException::receiverDoesNotExist);
+        User receiver = userService.getUserFromEmail(transactionRequest.getReceiverEmail())
+                .orElseThrow(InvalidTransactionException::receiverDoesNotExist);
 
         if (sender.getEmail().equals(receiver.getEmail())) {
             throw InvalidTransactionException.selfTransactionNotAllowed();
@@ -92,47 +91,43 @@ public class TransactionServiceImpl implements TransactionService{
         notificationService.addTransactionNotification(transaction);
 
 
-
         return TransactionResponse.success();
     }
 
 
-    /**
-     * Returns all the users transactions sorted by creation date.
-     * The transactions are paginated.
-     */
-    @Override
-    public PaginatedResponse<TransactionView> getAllTransactions(int page, int size, User user) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+    public PaginatedResponse<TransactionView>
+    getFilteredTransactions(int page,
+                            int size,
+                            TransactionQueryFilter filter,
+                            String sortBy,
+                            String order) {
 
-        Page<TransactionView> transactions = transactionRepository.findAllByUser(user, pageable).map((transaction) -> {
+        Pageable pageable;
 
-            if (transaction.getSender().getEmail().equals(user.getEmail())) {
-                return TransactionView.toWithdrawal(transaction);
-            }
+        List<String> allowedFields = List.of("createdAt", "amount");
 
-            return TransactionView.toDeposit(transaction);
-        });
+        if (!allowedFields.contains(sortBy)) {
+            throw new IllegalArgumentException("Invalid sort field: " + sortBy);
+        }
 
-        return getPaginatedTransactions(transactions);
-    }
-
-
-    public PaginatedResponse<TransactionView> getFilteredTransactions(int page, int size, TransactionQueryFilter filter) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        if (order.equalsIgnoreCase("asc")) {
+            pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+        } else {
+            pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
+        }
 
         Specification<Transaction> spec = filter.toSpecification();
 
         Page<TransactionView> transactions = transactionRepository.findAll(spec, pageable)
                 .map((transaction) -> {
 
-            if (transaction.getSender().getEmail().equals(filter.getUser().getEmail())) {
-                return TransactionView.toWithdrawal(transaction);
-            }
+                    if (transaction.getSender().getEmail().equals(filter.getUser().getEmail())) {
+                        return TransactionView.toWithdrawal(transaction);
+                    }
 
-            return TransactionView.toDeposit(transaction);
+                    return TransactionView.toDeposit(transaction);
 
-        });
+                });
 
         return getPaginatedTransactions(transactions);
     }
@@ -153,9 +148,13 @@ public class TransactionServiceImpl implements TransactionService{
     }
 
 
+    /**
+     * Gets the total amount of deposits of the
+     * user in the current month
+     */
     public float getMonthlyDepositsTotal(User user) {
         List<Transaction> monthlyDeposits = transactionRepository.findAllMonthlyDeposits(user,
-                LocalDate.now().withDayOfMonth(1).atStartOfDay(),LocalDateTime.now());
+                LocalDate.now().withDayOfMonth(1).atStartOfDay(), LocalDateTime.now());
 
         return monthlyDeposits.stream()
                 .map(Transaction::getAmount)
@@ -163,9 +162,13 @@ public class TransactionServiceImpl implements TransactionService{
     }
 
 
+    /**
+     * Gets the total amount of withdrawals of the
+     * user in the current month
+     */
     public float getMonthlyWithdrawalsTotal(User user) {
         List<Transaction> monthlyWithdrawals = transactionRepository.findAllMonthlyWithdrawals(user,
-                LocalDate.now().withDayOfMonth(1).atStartOfDay(),LocalDateTime.now());
+                LocalDate.now().withDayOfMonth(1).atStartOfDay(), LocalDateTime.now());
 
         return monthlyWithdrawals.stream()
                 .map(Transaction::getAmount)

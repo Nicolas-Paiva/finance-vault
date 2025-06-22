@@ -36,9 +36,26 @@ public class TransactionController {
         return ResponseEntity.ok(transactionService.createTransaction(transactionRequest, user));
     }
 
+
+    /**
+     * Returns a Pageable response with TransactionViews of the user.
+     *
+     * The transactions can be filtered and sorted by passing
+     * query parameters in the URL.
+     *
+     * The accepted filters are:
+     * - type: "deposit" OR "withdrawal"
+     * - minValue
+     * - maxValue
+     *
+     * SortBy properties are:
+     * createdAt OR amount
+     */
     @GetMapping("/transactions")
-    public ResponseEntity<?> getAllTransactions(
+    public ResponseEntity<PaginatedResponse<TransactionView>> getAllTransactions(
             @ModelAttribute TransactionQueryFilter filter,
+            @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String order,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "20") int size,
             Authentication authentication
@@ -49,9 +66,8 @@ public class TransactionController {
         // Sets the user in the filter
         filter.setUser(user);
 
-//        PaginatedResponse<TransactionView> transactions = transactionService.getAllTransactions(page, size, user);
         PaginatedResponse<TransactionView> transactions = transactionService
-                .getFilteredTransactions(page, size, filter);
+                .getFilteredTransactions(page, size, filter, sortBy, order);
 
         return ResponseEntity.ok(transactions);
     }

@@ -17,11 +17,12 @@ public interface TransactionService {
     TransactionResponse createTransaction(TransactionRequest transactionRequest, User user);
 
 
-    PaginatedResponse<TransactionView> getAllTransactions(int page, int size, User user);
+    PaginatedResponse<TransactionView> getFilteredTransactions(int page, int size, TransactionQueryFilter filter,
+                                                               String sortBy, String order);
 
-    PaginatedResponse<TransactionView> getFilteredTransactions(int page, int size, TransactionQueryFilter filter);
 
     float getMonthlyDepositsTotal(User user);
+
 
     float getMonthlyWithdrawalsTotal(User user);
 
