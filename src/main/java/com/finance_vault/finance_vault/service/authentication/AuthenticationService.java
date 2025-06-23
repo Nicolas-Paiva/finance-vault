@@ -6,7 +6,7 @@ import com.finance_vault.finance_vault.dto.auth.LoginSuccessResponse;
 import com.finance_vault.finance_vault.dto.auth.UserRegistrationRequest;
 import com.finance_vault.finance_vault.exception.InvalidRegistrationException;
 import com.finance_vault.finance_vault.exception.InvalidEmailOrPasswordException;
-import com.finance_vault.finance_vault.model.user.Currency;
+import com.finance_vault.finance_vault.model.currency.Currency;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.UserRepository;
 import com.finance_vault.finance_vault.security.jwt.JWTService;
@@ -41,6 +41,7 @@ public class AuthenticationService {
         String currency = userRegistrationRequest.getCurrency();
 
 
+        // Checks whether the email format is valid
         if (!Utils.isEmailFormatValid(email)) {
             throw InvalidRegistrationException.invalidEmail();
         }
@@ -50,11 +51,21 @@ public class AuthenticationService {
             throw InvalidRegistrationException.userEmailAlreadyExists();
         }
 
+        // Checks whether the name field is empty
+        if (userRegistrationRequest.getName().isBlank()) {
+            throw InvalidRegistrationException.invalidName();
+        }
+
+        if (userRegistrationRequest.getLastName().isBlank()) {
+            throw InvalidRegistrationException.invalidLastName();
+        }
+
         // Checks whether the password is valid
         if (!Utils.isPasswordValid(password)) {
             throw InvalidRegistrationException.invalidPassword();
         }
 
+        // Checks whether the currency is valid
         if (!isValidCurrency(currency)) {
             throw  InvalidRegistrationException.invalidCurrency();
         }

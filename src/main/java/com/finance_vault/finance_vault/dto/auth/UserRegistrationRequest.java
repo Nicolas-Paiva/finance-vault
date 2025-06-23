@@ -1,10 +1,9 @@
 package com.finance_vault.finance_vault.dto.auth;
 
-import com.finance_vault.finance_vault.model.user.Currency;
+import com.finance_vault.finance_vault.model.currency.Currency;
 import com.finance_vault.finance_vault.model.user.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

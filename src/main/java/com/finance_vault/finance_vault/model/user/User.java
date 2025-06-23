@@ -1,5 +1,6 @@
 package com.finance_vault.finance_vault.model.user;
 
+import com.finance_vault.finance_vault.model.currency.Currency;
 import com.finance_vault.finance_vault.model.notification.TransactionNotification;
 import com.finance_vault.finance_vault.model.transaction.Transaction;
 import jakarta.persistence.*;

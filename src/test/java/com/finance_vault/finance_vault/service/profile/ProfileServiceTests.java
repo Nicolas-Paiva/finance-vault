@@ -29,8 +29,6 @@ public class ProfileServiceTests {
     @Mock
     private UserService userService;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserProfileServiceImpl userProfileService;
@@ -53,6 +51,7 @@ public class ProfileServiceTests {
         // Assert
         verify(userService).changeUserEmail(user, newEmail);
         Assertions.assertThat(response.isSuccess()).isEqualTo(true);
+        Assertions.assertThat(response.getMessage()).contains("Email changed successfully");
     }
 
 
@@ -62,7 +61,7 @@ public class ProfileServiceTests {
         User user = new User();
         user.setEmail("nicolas@outlook.com");
 
-        String newPassword = "abc@abc.com";
+        String newPassword = "Z12345698.";
         PasswordChangeRequest request = new PasswordChangeRequest();
         request.setNewPassword(newPassword);
         request.setNewPasswordConfirmation(newPassword);

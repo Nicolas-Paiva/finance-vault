@@ -5,6 +5,7 @@ import com.finance_vault.finance_vault.exception.InvalidTransactionException;
 import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.TransactionRepository;
+import com.finance_vault.finance_vault.service.notification.NotificationService;
 import com.finance_vault.finance_vault.service.user.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -22,10 +23,8 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@Slf4j
 @RunWith(SpringRunner.class)
 @ExtendWith(MockitoExtension.class)
 public class TransactionServiceTests {
@@ -36,11 +35,11 @@ public class TransactionServiceTests {
     @Mock
     private UserService userService;
 
+    @Mock
+    private NotificationService notificationService;
+
     @InjectMocks
     private TransactionServiceImpl transactionService;
-
-
-    // TODO: Modify test for taking into consideration the notification service
 
     @Test
     public void ShouldCreateTransaction() {
@@ -75,6 +74,7 @@ public class TransactionServiceTests {
         when(userService.getUserFromEmail(sender.getEmail())).thenReturn(Optional.of(sender));
         when(userService.getUserFromEmail(receiver.getEmail())).thenReturn(Optional.of(receiver));
         when(transactionRepository.save(Mockito.any(Transaction.class))).thenReturn(null);
+        doNothing().when(notificationService).addTransactionNotification(Mockito.any(Transaction.class));
 
         // Act
         transactionService.createTransaction(transaction, sender);

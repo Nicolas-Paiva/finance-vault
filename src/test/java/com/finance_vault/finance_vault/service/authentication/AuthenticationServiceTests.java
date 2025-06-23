@@ -36,9 +36,9 @@ public class AuthenticationServiceTests {
         // Arrange
         UserRegistrationRequest request = new UserRegistrationRequest();
         request.setName("Nicolas");
+        request.setLastName("Paiva");
         request.setEmail("abc@abc.com");
         request.setPassword("N1234567.");
-        request.setName("Nicolas");
         request.setCurrency("EUR");
 
 
@@ -55,14 +55,15 @@ public class AuthenticationServiceTests {
 
 
     @Test
-    public void Registration_ShouldThrowException_WhenEmailIsNotValid() {
+    public void ShouldThrowException_WhenEmailIsNotValid() {
 
         // Arrange
         UserRegistrationRequest request = new UserRegistrationRequest();
         request.setName("Nicolas");
+        request.setLastName("Paiva");
         request.setEmail("abcasdas");
         request.setPassword("N1234567.");
-        request.setName("Nicolas");
+        request.setCurrency("CHF");
 
 
         // Act & Assert
@@ -74,13 +75,14 @@ public class AuthenticationServiceTests {
     }
 
     @Test
-    public void Registration_ShouldThrowException_WhenPaswordIsNotValid() {
+    public void ShouldThrowException_WhenPasswordIsNotValid() {
         // Arrange
         UserRegistrationRequest request = new UserRegistrationRequest();
         request.setName("Nicolas");
+        request.setLastName("Paiva");
         request.setEmail("abc@abc.com");
         request.setPassword("12345678");
-        request.setName("Nicolas");
+        request.setCurrency("CHF");
 
 
         // Act & Assert
@@ -95,13 +97,13 @@ public class AuthenticationServiceTests {
 
 
     @Test
-    public void Registration_ShouldThrowException_WhenCurrencyIsNotValid() {
+    public void ShouldThrowException_WhenCurrencyIsNotValid() {
         // Arrange
         UserRegistrationRequest request = new UserRegistrationRequest();
         request.setName("Nicolas");
+        request.setLastName("Paiva");
         request.setEmail("abc@abc.com");
         request.setPassword("A12345678.");
-        request.setName("Nicolas");
         request.setCurrency("ABC");
 
 
@@ -112,6 +114,38 @@ public class AuthenticationServiceTests {
         Assertions.assertThat(exception.getMessage())
                 .contains("Please provide a supported currency");
 
+    }
+
+    @Test
+    public void ShouldThrowException_WhenNameIsNotProvided() {
+        // Arrange
+        UserRegistrationRequest request = new UserRegistrationRequest();
+        request.setName("");
+        request.setEmail("abc@abc.com");
+        request.setPassword("A12345678.");
+        request.setCurrency("EUR");
+
+        InvalidRegistrationException e = assertThrows(InvalidRegistrationException.class,
+                () -> authenticationService.register(request));
+
+        Assertions.assertThat(e.getMessage()).contains("Please provide a name");
+    }
+
+
+    @Test
+    public void ShouldThrowException_WhenLastNameIsNotProvided() {
+        // Arrange
+        UserRegistrationRequest request = new UserRegistrationRequest();
+        request.setName("Nicolas");
+        request.setLastName("");
+        request.setEmail("abc@abc.com");
+        request.setPassword("A12345678.");
+        request.setCurrency("EUR");
+
+        InvalidRegistrationException e = assertThrows(InvalidRegistrationException.class,
+                () -> authenticationService.register(request));
+
+        Assertions.assertThat(e.getMessage()).contains("Please provide a last name");
     }
 
 }

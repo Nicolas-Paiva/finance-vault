@@ -1,4 +1,4 @@
-package com.finance_vault.finance_vault.model.user;
+package com.finance_vault.finance_vault.model.currency;
 
 public enum Currency {
     EUR,

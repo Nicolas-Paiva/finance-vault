@@ -10,6 +10,8 @@ import com.finance_vault.finance_vault.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import static com.finance_vault.finance_vault.utils.Utils.isPasswordValid;
+
 @Service
 @RequiredArgsConstructor
 public class UserProfileServiceImpl implements UserProfileService {
