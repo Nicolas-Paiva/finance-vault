@@ -7,7 +7,7 @@ public class InvalidProfileChangeException extends RuntimeException {
 
 
     public static InvalidProfileChangeException invalidOldPassword() {
-        return new InvalidProfileChangeException("Please provide your current password");
+        return new InvalidProfileChangeException("The provided password must match the current one.");
     }
 
     public static InvalidProfileChangeException invalidPassword() {

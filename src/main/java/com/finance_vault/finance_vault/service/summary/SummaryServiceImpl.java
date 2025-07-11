@@ -18,7 +18,8 @@ public class SummaryServiceImpl implements SummaryService {
     @Override
     public SummaryDTO getSummaryData(User user) {
         return SummaryDTO.builder()
-                .name(user.getName())
+                .name(user.getName() + " " + user.getLastName())
+                .email(user.getEmail())
                 .balance(user.getBalance())
                 .currency(user.getCurrency())
                 .monthlyDepositsTotal(transactionService.getMonthlyDepositsTotal(user))

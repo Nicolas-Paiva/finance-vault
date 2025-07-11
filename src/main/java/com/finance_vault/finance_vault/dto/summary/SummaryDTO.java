@@ -14,6 +14,8 @@ public class SummaryDTO {
 
     private String name;
 
+    private String email;
+
     private float balance;
 
     private Currency currency;

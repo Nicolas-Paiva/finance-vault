@@ -8,6 +8,7 @@ import com.finance_vault.finance_vault.exception.InvalidProfileChangeException;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.finance_vault.finance_vault.utils.Utils.isPasswordValid;
@@ -48,7 +49,9 @@ public class UserProfileServiceImpl implements UserProfileService {
      */
     @Override
     public ProfileDataChangeResponse changeUserPassword(User user, PasswordChangeRequest request) {
-        if (!request.getOldPassword().matches(user.getPassword())) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
+        if (!encoder.matches(request.getOldPassword(), user.getPassword())) {
             throw InvalidProfileChangeException.invalidOldPassword();
         }
 
