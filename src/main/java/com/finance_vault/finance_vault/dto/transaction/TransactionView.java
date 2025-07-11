@@ -18,19 +18,19 @@ public class TransactionView {
 
     private LocalDateTime createdAt;
 
-    private String senderEmail;
+    private String senderName;
 
-    private String receiverEmail;
+    private String receiverName;
 
     // Returns the DTO as a withdrawal
     public static TransactionView toWithdrawal(Transaction transaction) {
         return new TransactionView(transaction.getId(), transaction.getAmount(),
-                transaction.getCreatedAt(), null, transaction.getReceiver().getEmail());
+                transaction.getCreatedAt(), null, transaction.getReceiver().getName());
     }
 
     // Returns the DTO as a deposit
     public static TransactionView toDeposit(Transaction transaction) {
         return new TransactionView(transaction.getId(), transaction.getAmount(),
-                transaction.getCreatedAt(), transaction.getSender().getEmail(), null);
+                transaction.getCreatedAt(), transaction.getSender().getName(), null);
     }
 }

@@ -19,16 +19,19 @@ public class RegistrationResponse {
 
     private String message;
 
+    private String jwtToken;
+
 
     /**
      * Returns the success message when the user is
      * created successfully
      */
-    public static RegistrationResponse success(UserRegistrationRequest userRegistrationRequest) {
+    public static RegistrationResponse success(UserRegistrationRequest userRegistrationRequest, String jwt) {
         return RegistrationResponse.builder()
                 .created(true)
                 .timeStamp(LocalDateTime.now())
                 .message("User " + userRegistrationRequest.getEmail() + " created successfully!")
+                .jwtToken(jwt)
                 .build();
     }
 

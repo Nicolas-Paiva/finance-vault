@@ -7,7 +7,6 @@ import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.TransactionRepository;
 import com.finance_vault.finance_vault.service.notification.NotificationService;
 import com.finance_vault.finance_vault.service.user.UserService;
-import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

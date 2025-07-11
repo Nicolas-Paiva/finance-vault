@@ -10,11 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TransactionRequest {
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
     private String receiverEmail;
 
-    @Positive(message = "Transaction value must be positive")
     private float amount;
 
 }

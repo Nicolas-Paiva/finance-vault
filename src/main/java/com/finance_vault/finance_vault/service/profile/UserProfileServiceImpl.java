@@ -48,6 +48,10 @@ public class UserProfileServiceImpl implements UserProfileService {
      */
     @Override
     public ProfileDataChangeResponse changeUserPassword(User user, PasswordChangeRequest request) {
+        if (!request.getOldPassword().matches(user.getPassword())) {
+            throw InvalidProfileChangeException.invalidOldPassword();
+        }
+
         if (!request.getNewPassword().equals(request.getNewPasswordConfirmation())) {
             throw InvalidProfileChangeException.passwordMustMatch();
         }

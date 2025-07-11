@@ -29,12 +29,10 @@ public class UserRegistrationRequest {
     @Size(min = 8, message = "Password must have at least 8 characters")
     private String password;
 
-    @NotBlank
-    @Size(min = 3, message = "Name must have at least three characters")
+    @NotBlank(message = "Name must be provided")
     private String name;
 
-    @NotBlank
-    @Size(min = 3, message = "Name must have at least three characters")
+    @NotBlank(message = "Last name must be provided")
     private String lastName;
 
     @NotBlank

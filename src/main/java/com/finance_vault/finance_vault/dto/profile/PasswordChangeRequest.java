@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 public class PasswordChangeRequest {
 
     @NotBlank(message = "Please provide a password")
+    private String oldPassword;
+
+    @NotBlank(message = "Please provide a password")
     private String newPassword;
 
     @NotBlank(message = "Please provide a confirmation password")

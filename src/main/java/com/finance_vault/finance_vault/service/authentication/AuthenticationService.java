@@ -75,7 +75,9 @@ public class AuthenticationService {
         userRegistrationRequest.setPassword(passwordEncoder.encode(password));
         userRepository.save(UserRegistrationRequest.toUser(userRegistrationRequest));
 
-        return RegistrationResponse.success(userRegistrationRequest);
+        String jwt = jwtService.generateToken(email);
+
+        return RegistrationResponse.success(userRegistrationRequest, jwt);
     }
 
 
