@@ -13,14 +13,21 @@ public class ProfileDataChangeResponse {
 
     private String message;
 
-    public static ProfileDataChangeResponse successEmailChanged() {
+    private String jwt;
+
+    public static ProfileDataChangeResponse successEmailChanged(String jwt) {
         return new ProfileDataChangeResponse(true,
-                "Email changed successfully");
+                "Email changed successfully", jwt);
     }
 
 
-    public static ProfileDataChangeResponse successPasswordChanged() {
+    public static ProfileDataChangeResponse successPasswordChanged(String jwt) {
         return new ProfileDataChangeResponse(true,
-                "Password changed successfully");
+                "Password changed successfully", jwt);
+    }
+
+    public static ProfileDataChangeResponse successNameChanged(String jwt) {
+        return new ProfileDataChangeResponse(true,
+                "Name changed successfully", jwt);
     }
 }

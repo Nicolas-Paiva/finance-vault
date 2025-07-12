@@ -1,11 +1,9 @@
 package com.finance_vault.finance_vault.service.profile;
 
-import com.finance_vault.finance_vault.dto.profile.EmailChangeRequest;
-import com.finance_vault.finance_vault.dto.profile.PasswordChangeRequest;
-import com.finance_vault.finance_vault.dto.profile.ProfileDataChangeResponse;
-import com.finance_vault.finance_vault.dto.profile.ProfileDataDTO;
+import com.finance_vault.finance_vault.dto.profile.*;
 import com.finance_vault.finance_vault.exception.InvalidProfileChangeException;
 import com.finance_vault.finance_vault.model.user.User;
+import com.finance_vault.finance_vault.security.jwt.JWTService;
 import com.finance_vault.finance_vault.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,6 +16,9 @@ import static com.finance_vault.finance_vault.utils.Utils.isPasswordValid;
 public class UserProfileServiceImpl implements UserProfileService {
 
     private final UserService userService;
+
+    private final JWTService jwtService;
+
 
     @Override
     public ProfileDataDTO getUserProfileData(User user) {
@@ -32,13 +33,19 @@ public class UserProfileServiceImpl implements UserProfileService {
      */
     @Override
     public ProfileDataChangeResponse changeUserEmail(User user, EmailChangeRequest request) {
-        if (!request.getNewEmail().equals(request.getNewEmailConfirmation())) {
+        String newEmail = request.getNewEmail();
+
+        if (!newEmail.equals(request.getNewEmailConfirmation())) {
             throw InvalidProfileChangeException.emailMustMatch();
         }
 
-        userService.changeUserEmail(user, request.getNewEmail());
+        // Changes the user email
+        userService.changeUserEmail(user, newEmail);
 
-        return ProfileDataChangeResponse.successEmailChanged();
+        //Generates a new JWT for the provided email
+        String jwt = jwtService.generateToken(newEmail);
+
+        return ProfileDataChangeResponse.successEmailChanged(jwt);
     }
 
 
@@ -59,9 +66,34 @@ public class UserProfileServiceImpl implements UserProfileService {
             throw InvalidProfileChangeException.passwordMustMatch();
         }
 
+        // Changes the user password
         userService.changeUserPassword(user, request.getNewPassword());
 
-        return ProfileDataChangeResponse.successPasswordChanged();
+        //Generates a new JWT for the provided email
+        String jwt = jwtService.generateToken(user.getEmail());
+
+        return ProfileDataChangeResponse.successPasswordChanged(jwt);
+    }
+
+
+    /**
+     * Changes the user's name
+     */
+    public ProfileDataChangeResponse changeUserName(User user, UserNameChangeRequest request) {
+        if (request.getNewName().isBlank()) {
+            throw InvalidProfileChangeException.invalidName();
+        }
+
+        if (request.getNewLastName().isBlank()) {
+            throw InvalidProfileChangeException.invalidLastName();
+        }
+
+        userService.changeUserName(user, request.getNewName(), request.getNewLastName());
+
+        //Generates a new JWT for the provided email
+        String jwt = jwtService.generateToken(user.getEmail());
+
+        return ProfileDataChangeResponse.successNameChanged(jwt);
     }
 
 }

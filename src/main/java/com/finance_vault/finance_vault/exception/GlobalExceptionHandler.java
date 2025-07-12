@@ -99,6 +99,6 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(InvalidProfileChangeException.class)
     public ResponseEntity<ProfileDataChangeResponse> handleInvalidDataChange(InvalidProfileChangeException e) {
-        return ResponseEntity.badRequest().body(new ProfileDataChangeResponse(false, e.getMessage()));
+        return ResponseEntity.badRequest().body(new ProfileDataChangeResponse(false, e.getMessage(), null));
     }
 }

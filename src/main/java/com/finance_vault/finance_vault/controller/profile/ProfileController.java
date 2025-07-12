@@ -1,9 +1,6 @@
 package com.finance_vault.finance_vault.controller.profile;
 
-import com.finance_vault.finance_vault.dto.profile.EmailChangeRequest;
-import com.finance_vault.finance_vault.dto.profile.PasswordChangeRequest;
-import com.finance_vault.finance_vault.dto.profile.ProfileDataChangeResponse;
-import com.finance_vault.finance_vault.dto.profile.ProfileDataDTO;
+import com.finance_vault.finance_vault.dto.profile.*;
 import com.finance_vault.finance_vault.exception.UserNotFoundException;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.service.profile.UserProfileService;
@@ -25,12 +22,24 @@ public class ProfileController {
 
     private final UserService userService;
 
+    // TODO: Send new JWT when user updates email or password
+
     @GetMapping("/profile")
     public ResponseEntity<ProfileDataDTO> getUserProfileData(Authentication authentication) {
         User user = userService.getUserFromEmail(authentication.getName())
                 .orElseThrow(UserNotFoundException::new);
         return ResponseEntity.ok(userProfileService.getUserProfileData(user));
     }
+
+
+    @PostMapping("/profile/name")
+    public ResponseEntity<ProfileDataChangeResponse> changeProfileName(@RequestBody @Valid UserNameChangeRequest request,
+                                                                       Authentication authentication) {
+        User user = userService.getUserFromEmail(authentication.getName())
+                .orElseThrow(UserNotFoundException::new);
+        return ResponseEntity.ok(userProfileService.changeUserName(user, request));
+    }
+
 
     @PostMapping("/profile/email")
     public ResponseEntity<ProfileDataChangeResponse> changeProfileEmail(@RequestBody @Valid EmailChangeRequest request, Authentication authentication) {

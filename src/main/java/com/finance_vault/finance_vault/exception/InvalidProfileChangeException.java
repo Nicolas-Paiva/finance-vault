@@ -6,9 +6,20 @@ public class InvalidProfileChangeException extends RuntimeException {
     }
 
 
+    public static InvalidProfileChangeException invalidName() {
+        return new InvalidProfileChangeException("Name must not be empty");
+    }
+
+
+    public static InvalidProfileChangeException invalidLastName() {
+        return new InvalidProfileChangeException("Last name must not be empty");
+    }
+
+
     public static InvalidProfileChangeException invalidOldPassword() {
         return new InvalidProfileChangeException("The provided password must match the current one.");
     }
+
 
     public static InvalidProfileChangeException invalidPassword() {
         return new InvalidProfileChangeException("Please provide a valid password. A valid password must contain at " +

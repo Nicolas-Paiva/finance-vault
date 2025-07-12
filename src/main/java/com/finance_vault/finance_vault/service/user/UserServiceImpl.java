@@ -61,4 +61,12 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    @Override
+    public void changeUserName(User user, String newName, String newLastName) {
+        user.setName(newName);
+        user.setLastName(newLastName);
+        userRepository.save(user);
+    }
+
+
 }

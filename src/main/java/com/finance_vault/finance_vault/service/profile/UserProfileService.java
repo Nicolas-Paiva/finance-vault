@@ -1,9 +1,6 @@
 package com.finance_vault.finance_vault.service.profile;
 
-import com.finance_vault.finance_vault.dto.profile.EmailChangeRequest;
-import com.finance_vault.finance_vault.dto.profile.PasswordChangeRequest;
-import com.finance_vault.finance_vault.dto.profile.ProfileDataChangeResponse;
-import com.finance_vault.finance_vault.dto.profile.ProfileDataDTO;
+import com.finance_vault.finance_vault.dto.profile.*;
 import com.finance_vault.finance_vault.model.user.User;
 
 public interface UserProfileService {
@@ -13,4 +10,6 @@ public interface UserProfileService {
     ProfileDataChangeResponse changeUserEmail(User user, EmailChangeRequest request);
 
     ProfileDataChangeResponse changeUserPassword(User user, PasswordChangeRequest request);
+
+    public ProfileDataChangeResponse changeUserName(User user, UserNameChangeRequest request);
 }

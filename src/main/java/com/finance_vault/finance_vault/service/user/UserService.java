@@ -11,4 +11,6 @@ public interface UserService {
     void changeUserEmail(User user, String newEmail);
 
     void changeUserPassword(User user, String newPassword);
+
+    void changeUserName(User user, String newName, String newLastName);
 }
