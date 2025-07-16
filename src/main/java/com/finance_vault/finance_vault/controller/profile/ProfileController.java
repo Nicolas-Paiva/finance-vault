@@ -22,8 +22,6 @@ public class ProfileController {
 
     private final UserService userService;
 
-    // TODO: Send new JWT when user updates email or password
-
     @GetMapping("/profile")
     public ResponseEntity<ProfileDataDTO> getUserProfileData(Authentication authentication) {
         User user = userService.getUserFromEmail(authentication.getName())

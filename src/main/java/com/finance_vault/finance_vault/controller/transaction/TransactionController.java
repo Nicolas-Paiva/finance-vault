@@ -1,6 +1,7 @@
 package com.finance_vault.finance_vault.controller.transaction;
 
 import com.finance_vault.finance_vault.dto.PaginatedResponse;
+import com.finance_vault.finance_vault.dto.transaction.FundsRequest;
 import com.finance_vault.finance_vault.dto.transaction.TransactionRequest;
 import com.finance_vault.finance_vault.dto.transaction.TransactionResponse;
 import com.finance_vault.finance_vault.dto.transaction.TransactionView;
@@ -31,7 +32,8 @@ public class TransactionController {
      */
     @PostMapping("/transactions")
     public ResponseEntity<TransactionResponse> createTransaction(@RequestBody @Valid TransactionRequest transactionRequest, Authentication authentication) {
-        User user = userService.getUserFromEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserFromEmail(authentication.getName())
+                .orElseThrow(UserNotFoundException::new);
 
         return ResponseEntity.ok(transactionService.createTransaction(transactionRequest, user));
     }
@@ -61,7 +63,8 @@ public class TransactionController {
             Authentication authentication
             ) {
 
-        User user = userService.getUserFromEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        User user = userService.getUserFromEmail(authentication.getName())
+                .orElseThrow(UserNotFoundException::new);
 
         // Sets the user in the filter
         filter.setUser(user);
@@ -70,6 +73,14 @@ public class TransactionController {
                 .getFilteredTransactions(page, size, filter, sortBy, order);
 
         return ResponseEntity.ok(transactions);
+    }
+
+    @PostMapping("/transactions/add")
+    public ResponseEntity<?> addFunds(Authentication authentication, @RequestBody FundsRequest request) {
+        User user = userService.getUserFromEmail(authentication.getName())
+                .orElseThrow(UserNotFoundException::new);
+
+        return ResponseEntity.ok(transactionService.getFunds(request, user));
     }
 
 }

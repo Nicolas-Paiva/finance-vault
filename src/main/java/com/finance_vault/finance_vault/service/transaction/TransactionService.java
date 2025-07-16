@@ -1,9 +1,7 @@
 package com.finance_vault.finance_vault.service.transaction;
 
 import com.finance_vault.finance_vault.dto.PaginatedResponse;
-import com.finance_vault.finance_vault.dto.transaction.TransactionRequest;
-import com.finance_vault.finance_vault.dto.transaction.TransactionResponse;
-import com.finance_vault.finance_vault.dto.transaction.TransactionView;
+import com.finance_vault.finance_vault.dto.transaction.*;
 import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.queryFilter.TransactionQueryFilter;
@@ -26,4 +24,5 @@ public interface TransactionService {
 
     float getMonthlyWithdrawalsTotal(User user);
 
+    FundsResponse getFunds(FundsRequest request, User user);
 }

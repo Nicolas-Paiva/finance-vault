@@ -1,15 +1,14 @@
 package com.finance_vault.finance_vault.service.transaction;
 
 import com.finance_vault.finance_vault.dto.PaginatedResponse;
-import com.finance_vault.finance_vault.dto.transaction.TransactionRequest;
-import com.finance_vault.finance_vault.dto.transaction.TransactionResponse;
-import com.finance_vault.finance_vault.dto.transaction.TransactionView;
+import com.finance_vault.finance_vault.dto.transaction.*;
 import com.finance_vault.finance_vault.exception.InvalidTransactionException;
+import com.finance_vault.finance_vault.model.currency.Currency;
 import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.TransactionRepository;
+import com.finance_vault.finance_vault.repository.UserRepository;
 import com.finance_vault.finance_vault.repository.queryFilter.TransactionQueryFilter;
-import com.finance_vault.finance_vault.repository.specification.TransactionSpec;
 import com.finance_vault.finance_vault.service.notification.NotificationService;
 import com.finance_vault.finance_vault.service.user.UserService;
 import jakarta.transaction.Transactional;
@@ -34,6 +33,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final UserService userService;
 
     private final NotificationService notificationService;
+    private final UserRepository userRepository;
 
 
     /**
@@ -83,13 +83,16 @@ public class TransactionServiceImpl implements TransactionService {
         transactionRepository.save(transaction);
 
 
+        // Updates the sender's data
         sender.setBalance(sender.getBalance() - amount);
         sender.getSentTransactions().add(transaction);
 
+        // Updates the receiver's data
         receiver.setBalance(receiver.getBalance() + amount);
         receiver.getReceivedTransactions().add(transaction);
-        notificationService.addTransactionNotification(transaction);
 
+        // Updates the notification service
+        notificationService.addTransactionNotification(transaction);
 
         return TransactionResponse.success();
     }
@@ -173,6 +176,17 @@ public class TransactionServiceImpl implements TransactionService {
         return monthlyWithdrawals.stream()
                 .map(Transaction::getAmount)
                 .reduce(0F, Float::sum);
+    }
+
+    // TODO: Find a way to create transactions from Finance Vault to the user
+
+    @Override
+    public FundsResponse getFunds(FundsRequest request, User user) {
+        user.setBalance(user.getBalance() + request.getAmount());
+
+        userRepository.save(user);
+
+        return new FundsResponse(true);
     }
 
 }

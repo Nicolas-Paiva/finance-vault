@@ -15,6 +15,7 @@ public class ProfileDataChangeResponse {
 
     private String jwt;
 
+
     public static ProfileDataChangeResponse successEmailChanged(String jwt) {
         return new ProfileDataChangeResponse(true,
                 "Email changed successfully", jwt);
@@ -26,8 +27,10 @@ public class ProfileDataChangeResponse {
                 "Password changed successfully", jwt);
     }
 
+
     public static ProfileDataChangeResponse successNameChanged(String jwt) {
         return new ProfileDataChangeResponse(true,
                 "Name changed successfully", jwt);
     }
+
 }
