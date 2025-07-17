@@ -191,12 +191,15 @@ public class TransactionServiceImpl implements TransactionService {
                 .atTime(LocalTime.MAX); // ← this is the key fix
 
         MonthlyTransactionsDTO monthlyTransactions = new MonthlyTransactionsDTO();
-        monthlyTransactions.setDeposits(
-                transactionRepository.findAllMonthlyDeposits(user, firstDayOfTheMonth, lastDayOfMonth)
-        );
-        monthlyTransactions.setWithdrawals(
-                transactionRepository.findAllMonthlyWithdrawals(user, firstDayOfTheMonth, lastDayOfMonth)
-        );
+
+        List<TransactionView> deposits = transactionRepository.findAllMonthlyDeposits(user, firstDayOfTheMonth,
+                        lastDayOfMonth).stream().map(TransactionView::toDeposit).toList();
+
+        List<TransactionView> withdrawals = transactionRepository.findAllMonthlyWithdrawals(user, firstDayOfTheMonth,
+                lastDayOfMonth).stream().map(TransactionView::toWithdrawal).toList();
+
+        monthlyTransactions.setDeposits(deposits);
+        monthlyTransactions.setWithdrawals(withdrawals);
 
         return monthlyTransactions;
     }

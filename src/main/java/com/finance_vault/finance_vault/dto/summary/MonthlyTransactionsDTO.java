@@ -1,6 +1,6 @@
 package com.finance_vault.finance_vault.dto.summary;
 
-import com.finance_vault.finance_vault.model.transaction.Transaction;
+import com.finance_vault.finance_vault.dto.transaction.TransactionView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MonthlyTransactionsDTO {
 
-    private List<Transaction> deposits;
+    private List<TransactionView> deposits;
 
-    private List<Transaction> withdrawals;
+    private List<TransactionView> withdrawals;
 }
