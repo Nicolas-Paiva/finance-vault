@@ -1,5 +1,6 @@
 package com.finance_vault.finance_vault.service.summary;
 
+import com.finance_vault.finance_vault.dto.summary.MonthlyTransactionsDTO;
 import com.finance_vault.finance_vault.dto.summary.SummaryDTO;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.service.notification.NotificationService;
@@ -26,6 +27,12 @@ public class SummaryServiceImpl implements SummaryService {
                 .monthlyWithdrawalsTotal(transactionService.getMonthlyWithdrawalsTotal(user))
                 .numberOfNotifications(notificationService.getNumberOfUnseenNotifications(user))
                 .build();
+    }
+
+
+    @Override
+    public MonthlyTransactionsDTO getMonthlyTransactions(User user) {
+        return transactionService.getMonthlyTransactions(user);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.finance_vault.finance_vault.service.transaction;
 
 import com.finance_vault.finance_vault.dto.PaginatedResponse;
+import com.finance_vault.finance_vault.dto.summary.MonthlyTransactionsDTO;
 import com.finance_vault.finance_vault.dto.transaction.*;
 import com.finance_vault.finance_vault.exception.InvalidTransactionException;
 import com.finance_vault.finance_vault.model.currency.Currency;
@@ -22,6 +23,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 @Service
@@ -177,6 +181,26 @@ public class TransactionServiceImpl implements TransactionService {
                 .map(Transaction::getAmount)
                 .reduce(0F, Float::sum);
     }
+
+
+    @Override
+    public MonthlyTransactionsDTO getMonthlyTransactions(User user) {
+        LocalDateTime firstDayOfTheMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        LocalDateTime lastDayOfMonth = LocalDate.now()
+                .with(TemporalAdjusters.lastDayOfMonth())
+                .atTime(LocalTime.MAX); // ← this is the key fix
+
+        MonthlyTransactionsDTO monthlyTransactions = new MonthlyTransactionsDTO();
+        monthlyTransactions.setDeposits(
+                transactionRepository.findAllMonthlyDeposits(user, firstDayOfTheMonth, lastDayOfMonth)
+        );
+        monthlyTransactions.setWithdrawals(
+                transactionRepository.findAllMonthlyWithdrawals(user, firstDayOfTheMonth, lastDayOfMonth)
+        );
+
+        return monthlyTransactions;
+    }
+
 
     // TODO: Find a way to create transactions from Finance Vault to the user
 

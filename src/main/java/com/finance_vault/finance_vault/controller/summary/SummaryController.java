@@ -1,5 +1,6 @@
 package com.finance_vault.finance_vault.controller.summary;
 
+import com.finance_vault.finance_vault.dto.summary.MonthlyTransactionsDTO;
 import com.finance_vault.finance_vault.dto.summary.SummaryDTO;
 import com.finance_vault.finance_vault.exception.UserNotFoundException;
 import com.finance_vault.finance_vault.model.user.User;
@@ -35,11 +36,17 @@ public class SummaryController {
      * returning the message to the client.
      */
     @GetMapping("/summary")
-    public ResponseEntity<?> getSummary(Authentication authentication) {
+    public ResponseEntity<SummaryDTO> getSummary(Authentication authentication) {
         User user = userService.getUserFromEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
         SummaryDTO summaryDTO = summaryService.getSummaryData(user);
-
         return ResponseEntity.ok(summaryDTO);
+    }
+
+    @GetMapping("/summary/transactions")
+    public ResponseEntity<MonthlyTransactionsDTO> getMonthlyTransactions(Authentication authentication) {
+        User user = userService.getUserFromEmail(authentication.getName()).orElseThrow(UserNotFoundException::new);
+        MonthlyTransactionsDTO monthlyTransactions = summaryService.getMonthlyTransactions(user);
+        return ResponseEntity.ok(monthlyTransactions);
     }
 
 }

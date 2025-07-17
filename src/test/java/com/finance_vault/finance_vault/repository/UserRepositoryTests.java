@@ -2,19 +2,19 @@ package com.finance_vault.finance_vault.repository;
 
 import com.finance_vault.finance_vault.model.user.User;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
 @DataJpaTest
 public class UserRepositoryTests {
@@ -23,7 +23,7 @@ public class UserRepositoryTests {
     private UserRepository userRepository;
 
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void UserRepository_ThrowException_WhenIdIsProvided() {
         // Arrange
         User user = User.builder()
@@ -96,7 +96,7 @@ public class UserRepositoryTests {
     }
 
 
-    @Test(expected = DataIntegrityViolationException.class)
+    @Test
     public void ShouldThrowException_WhenEmailIsDuplicated() {
         // Arrange
         User user1 = User.builder()
@@ -126,7 +126,6 @@ public class UserRepositoryTests {
         // Assert
         Assertions.assertThat(users).isNotNull();
         Assertions.assertThat(users.size()).isEqualTo(2);
-
     }
 
 }

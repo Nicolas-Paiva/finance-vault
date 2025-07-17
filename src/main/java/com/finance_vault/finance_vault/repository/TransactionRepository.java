@@ -32,5 +32,4 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
     List<Transaction> findAllMonthlyWithdrawals(@Param("user") User user,
                                              @Param("startOfMonth") LocalDateTime startOfMonth,
                                              @Param("currentDay") LocalDateTime currentDay);
-
 }

@@ -5,28 +5,29 @@ import com.finance_vault.finance_vault.dto.auth.UserRegistrationRequest;
 import com.finance_vault.finance_vault.exception.InvalidRegistrationException;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.UserRepository;
+import com.finance_vault.finance_vault.security.jwt.JWTService;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Optional;
 
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @ExtendWith(MockitoExtension.class)
 public class AuthenticationServiceTests {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private JWTService jwtService;
 
     @InjectMocks
     private AuthenticationService authenticationService;
@@ -40,11 +41,6 @@ public class AuthenticationServiceTests {
         request.setEmail("abc@abc.com");
         request.setPassword("N1234567.");
         request.setCurrency("EUR");
-
-
-        // Mocks the methods called by userRepository
-        when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.empty());
-        when(userRepository.save(Mockito.any(User.class))).thenReturn(null);
 
         // Act
         RegistrationResponse response = authenticationService.register(request);
