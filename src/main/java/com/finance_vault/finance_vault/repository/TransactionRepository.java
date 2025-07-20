@@ -23,13 +23,13 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
     Page<Transaction> findAllByUser(@Param("user") User user, Pageable pageable);
 
 
-    @Query("SELECT t FROM Transaction t WHERE t.receiver = :user AND t.createdAt BETWEEN :startOfMonth AND :currentDay")
-    List<Transaction> findAllMonthlyDeposits(@Param("user") User user,
-                                             @Param("startOfMonth") LocalDateTime startOfMonth,
-                                             @Param("currentDay") LocalDateTime currentDay);
+    @Query("SELECT t FROM Transaction t WHERE t.receiver = :user AND t.createdAt BETWEEN :startDate AND :lastDate")
+    List<Transaction> findMonthlyDepositsInRange(@Param("user") User user,
+                                                 @Param("startDate") LocalDateTime startDate,
+                                                 @Param("lastDate") LocalDateTime lastDate);
 
-    @Query("SELECT t FROM Transaction t WHERE t.sender = :user AND t.createdAt BETWEEN :startOfMonth AND :currentDay")
-    List<Transaction> findAllMonthlyWithdrawals(@Param("user") User user,
-                                             @Param("startOfMonth") LocalDateTime startOfMonth,
-                                             @Param("currentDay") LocalDateTime currentDay);
+    @Query("SELECT t FROM Transaction t WHERE t.sender = :user AND t.createdAt BETWEEN :startDate AND :lastDate")
+    List<Transaction> findMonthlyWithdrawalsInRange(@Param("user") User user,
+                                                    @Param("startDate") LocalDateTime startDate,
+                                                    @Param("lastDate") LocalDateTime lastDate);
 }

@@ -2,9 +2,9 @@ package com.finance_vault.finance_vault.service.transaction;
 
 import com.finance_vault.finance_vault.dto.PaginatedResponse;
 import com.finance_vault.finance_vault.dto.summary.MonthlyTransactionsDTO;
+import com.finance_vault.finance_vault.dto.summary.WeeklyTotalsDto;
 import com.finance_vault.finance_vault.dto.transaction.*;
 import com.finance_vault.finance_vault.exception.InvalidTransactionException;
-import com.finance_vault.finance_vault.model.currency.Currency;
 import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.TransactionRepository;
@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
 import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
@@ -160,7 +159,7 @@ public class TransactionServiceImpl implements TransactionService {
      * user in the current month
      */
     public float getMonthlyDepositsTotal(User user) {
-        List<Transaction> monthlyDeposits = transactionRepository.findAllMonthlyDeposits(user,
+        List<Transaction> monthlyDeposits = transactionRepository.findMonthlyDepositsInRange(user,
                 LocalDate.now().withDayOfMonth(1).atStartOfDay(), LocalDateTime.now());
 
         return monthlyDeposits.stream()
@@ -174,7 +173,7 @@ public class TransactionServiceImpl implements TransactionService {
      * user in the current month
      */
     public float getMonthlyWithdrawalsTotal(User user) {
-        List<Transaction> monthlyWithdrawals = transactionRepository.findAllMonthlyWithdrawals(user,
+        List<Transaction> monthlyWithdrawals = transactionRepository.findMonthlyWithdrawalsInRange(user,
                 LocalDate.now().withDayOfMonth(1).atStartOfDay(), LocalDateTime.now());
 
         return monthlyWithdrawals.stream()
@@ -188,20 +187,57 @@ public class TransactionServiceImpl implements TransactionService {
         LocalDateTime firstDayOfTheMonth = LocalDate.now().withDayOfMonth(1).atStartOfDay();
         LocalDateTime lastDayOfMonth = LocalDate.now()
                 .with(TemporalAdjusters.lastDayOfMonth())
-                .atTime(LocalTime.MAX); // ← this is the key fix
+                .atTime(LocalTime.MAX);
 
         MonthlyTransactionsDTO monthlyTransactions = new MonthlyTransactionsDTO();
 
-        List<TransactionView> deposits = transactionRepository.findAllMonthlyDeposits(user, firstDayOfTheMonth,
+        List<TransactionView> deposits = transactionRepository.findMonthlyDepositsInRange(user, firstDayOfTheMonth,
                         lastDayOfMonth).stream().map(TransactionView::toDeposit).toList();
 
-        List<TransactionView> withdrawals = transactionRepository.findAllMonthlyWithdrawals(user, firstDayOfTheMonth,
+        List<TransactionView> withdrawals = transactionRepository.findMonthlyWithdrawalsInRange(user, firstDayOfTheMonth,
                 lastDayOfMonth).stream().map(TransactionView::toWithdrawal).toList();
 
         monthlyTransactions.setDeposits(deposits);
         monthlyTransactions.setWithdrawals(withdrawals);
 
         return monthlyTransactions;
+    }
+
+
+    public WeeklyTotalsDto getMonthWeeklyWithdrawals(User user) {
+        // Sets the date ranges
+        LocalDate firstDayOfTheMonth = LocalDate.now().withDayOfMonth(1);
+
+        LocalDate lastDayOfMonth = firstDayOfTheMonth.with(TemporalAdjusters.lastDayOfMonth());
+
+        LocalDate startOfSecondWeek = firstDayOfTheMonth.plusDays(7);
+
+        LocalDate startOfThirdWeek = startOfSecondWeek.plusDays(7);
+
+        LocalDate startOfFourthWeek = startOfThirdWeek.plusDays(7);
+
+
+        // Converts the first week transactions and reduce them to the total
+        float firstWeekTotals = transactionRepository.findMonthlyWithdrawalsInRange(user, firstDayOfTheMonth.atStartOfDay(),
+                startOfSecondWeek.minusDays(1).atTime(LocalTime.MAX)).stream().map(Transaction::getAmount).reduce(0f,
+                Float::sum);
+
+        float secondWeekTotals = transactionRepository.findMonthlyWithdrawalsInRange(user, startOfSecondWeek.atStartOfDay(),
+                startOfThirdWeek.minusDays(1).atTime(LocalTime.MAX)).stream().map(Transaction::getAmount).reduce(0f, Float::sum);
+
+        float thirdWeekTotals = transactionRepository.findMonthlyWithdrawalsInRange(user, startOfThirdWeek.atStartOfDay(),
+                startOfFourthWeek.minusDays(1).atTime(LocalTime.MAX)).stream().map(Transaction::getAmount).reduce(0f, Float::sum);
+
+        float fourthWeekTotals = transactionRepository.findMonthlyWithdrawalsInRange(user, startOfFourthWeek.atStartOfDay(),
+                lastDayOfMonth.atTime(LocalTime.MAX)).stream().map(Transaction::getAmount).reduce(0f, Float::sum);
+
+        WeeklyTotalsDto weeklyTotals = new WeeklyTotalsDto();
+
+        weeklyTotals.setTotals(List.of(firstWeekTotals, secondWeekTotals, thirdWeekTotals, fourthWeekTotals));
+        weeklyTotals.setDates(List.of(firstDayOfTheMonth.atStartOfDay(), startOfSecondWeek.atStartOfDay(),
+                startOfThirdWeek.atStartOfDay(), startOfFourthWeek.atStartOfDay(), lastDayOfMonth.atStartOfDay()));
+
+        return weeklyTotals;
     }
 
 
