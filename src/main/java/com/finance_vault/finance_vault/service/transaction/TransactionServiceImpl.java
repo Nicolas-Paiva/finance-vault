@@ -204,6 +204,10 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
 
+    /**
+     * Returns the total withdrawals for each week of the month.
+     * Also returns the day ranges of each week within the WeeklyTotalsDto
+     */
     public WeeklyTotalsDto getMonthWeeklyWithdrawals(User user) {
         // Sets the date ranges
         LocalDate firstDayOfTheMonth = LocalDate.now().withDayOfMonth(1);

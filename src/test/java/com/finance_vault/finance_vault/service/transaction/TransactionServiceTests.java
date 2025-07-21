@@ -2,9 +2,11 @@ package com.finance_vault.finance_vault.service.transaction;
 
 import com.finance_vault.finance_vault.dto.transaction.TransactionRequest;
 import com.finance_vault.finance_vault.exception.InvalidTransactionException;
+import com.finance_vault.finance_vault.model.currency.Currency;
 import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.TransactionRepository;
+import com.finance_vault.finance_vault.repository.UserRepository;
 import com.finance_vault.finance_vault.service.notification.NotificationService;
 import com.finance_vault.finance_vault.service.user.UserService;
 import org.assertj.core.api.Assertions;
@@ -14,6 +16,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
