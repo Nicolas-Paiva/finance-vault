@@ -2,6 +2,7 @@ package com.finance_vault.finance_vault.service.transaction;
 
 import com.finance_vault.finance_vault.dto.PaginatedResponse;
 import com.finance_vault.finance_vault.dto.summary.MonthlyTransactionsDTO;
+import com.finance_vault.finance_vault.dto.summary.WeeklyTotalsDto;
 import com.finance_vault.finance_vault.dto.transaction.*;
 import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
@@ -28,6 +29,7 @@ public interface TransactionService {
 
     MonthlyTransactionsDTO getMonthlyTransactions(User user);
 
+    WeeklyTotalsDto getMonthWeeklyWithdrawals(User user);
 
     FundsResponse getFunds(FundsRequest request, User user);
 
