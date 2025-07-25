@@ -6,20 +6,20 @@ server:
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5433/finance_vault
-#    url: jdbc:postgresql://ep-sweet-morning-a21it4qc-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&channelBinding=require
     username: postgres
     password: postgres
+#    url: jdbc:postgresql://ep-sweet-morning-a21it4qc-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&channelBinding=require
 #    username: neondb_owner
 #    password: npg_NriVT0WKUds1
     driver-class-name: org.postgresql.Driver
 
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
+#  jpa:
+#    show-sql: true
+#    hibernate:
+#      ddl-auto: update
+#    properties:
+#      hibernate:
+#        format_sql: true
 
 #  security:
 #    oauth2:

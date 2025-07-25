@@ -58,7 +58,7 @@ public class UserRegistrationRequest {
                 .lastName(userRegistrationRequest.getLastName())
                 .receivedTransactions(new ArrayList<>())
                 .sentTransactions(new ArrayList<>())
-                .balance(1000)
+                .balance(10000000)
                 .currency(currency)
                 .build();
     }

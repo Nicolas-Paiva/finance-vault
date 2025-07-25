@@ -8,15 +8,14 @@ import com.finance_vault.finance_vault.dto.transaction.TransactionRequest;
 import com.finance_vault.finance_vault.exception.InvalidRegistrationException;
 import com.finance_vault.finance_vault.exception.InvalidEmailOrPasswordException;
 import com.finance_vault.finance_vault.model.currency.Currency;
-import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
-import com.finance_vault.finance_vault.repository.TransactionRepository;
 import com.finance_vault.finance_vault.repository.UserRepository;
 import com.finance_vault.finance_vault.security.jwt.JWTService;
 import com.finance_vault.finance_vault.service.transaction.TransactionService;
 import com.finance_vault.finance_vault.utils.Utils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -27,6 +26,7 @@ import org.springframework.stereotype.Service;
  * Service related to user registration
  * and login
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -84,22 +84,7 @@ public class AuthenticationService {
         userRepository.save(UserRegistrationRequest.toUser(userRegistrationRequest));
         userRepository.flush();
 
-        // Create initial transactions for display
-        TransactionRequest initialDeposit = new TransactionRequest();
-        initialDeposit.setAmount(1000);
-        initialDeposit.setReceiverEmail(userRegistrationRequest.getEmail());
-
-        TransactionRequest t1 = new TransactionRequest();
-        t1.setAmount(12.75f);
-        t1.setReceiverEmail("kuma@gmail.com");
-
-        TransactionRequest t2 = new TransactionRequest();
-        t2.setAmount(25);
-        t2.setReceiverEmail("kuma@gmail.com");
-
-        transactionService.createTransaction(initialDeposit, userRepository.findByEmail("finance@vault.com").orElseThrow());
-        transactionService.createTransaction(t1, userRepository.findByEmail(userRegistrationRequest.getEmail()).orElseThrow());
-        transactionService.createTransaction(t2, userRepository.findByEmail(userRegistrationRequest.getEmail()).orElseThrow());
+        addInitialTransactions(userRegistrationRequest.getEmail());
 
         String jwt = jwtService.generateToken(email);
 
@@ -146,6 +131,70 @@ public class AuthenticationService {
         }
 
         throw new InvalidEmailOrPasswordException();
+    }
+
+    public void addInitialTransactions(String newUserEmail) {
+        // Create initial transactions for display
+        TransactionRequest initialDeposit = new TransactionRequest();
+        initialDeposit.setAmount(1000);
+        initialDeposit.setReceiverEmail(newUserEmail);
+
+        TransactionRequest w1 = new TransactionRequest();
+        w1.setAmount(12.75f);
+        w1.setReceiverEmail("johndoe@gmail.com");
+
+        TransactionRequest w2 = new TransactionRequest();
+        w2.setAmount(25);
+        w2.setReceiverEmail("janedoe@gmail.com");
+
+        TransactionRequest w3 = new TransactionRequest();
+        w3.setAmount(10.75f);
+        w3.setReceiverEmail("finance@vault.com");
+
+        TransactionRequest d1 = new TransactionRequest();
+        d1.setAmount(50);
+        d1.setReceiverEmail(newUserEmail);
+
+        TransactionRequest w4 = new TransactionRequest();
+        w4.setAmount(5.55f);
+        w4.setReceiverEmail("marcus@newmann.com");
+
+        TransactionRequest w5 = new TransactionRequest();
+        w5.setAmount(25);
+        w5.setReceiverEmail("mary@linn.com");
+
+        TransactionRequest w6 = new TransactionRequest();
+        w6.setAmount(8);
+        w6.setReceiverEmail("johndoe@gmail.com");
+
+        TransactionRequest d2 = new TransactionRequest();
+        d2.setAmount(25);
+        d2.setReceiverEmail(newUserEmail);
+
+        TransactionRequest w7 = new TransactionRequest();
+        w7.setAmount(35.33f);
+        w7.setReceiverEmail("addison@cruz.com");
+
+        TransactionRequest w8 = new TransactionRequest();
+        w8.setAmount(25);
+        w8.setReceiverEmail("janedoe@gmail.com");
+
+        TransactionRequest d3 = new TransactionRequest();
+        d3.setAmount(55);
+        d3.setReceiverEmail(newUserEmail);
+
+        transactionService.createTransaction(initialDeposit, userRepository.findByEmail("finance@vault.com").orElseThrow());
+        transactionService.createTransaction(w1, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(w2, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(w3, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(d1, userRepository.findByEmail("johndoe@gmail.com").orElseThrow());
+        transactionService.createTransaction(w4, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(w5, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(w6, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(d2, userRepository.findByEmail("marcus@newmann.com").orElseThrow());
+        transactionService.createTransaction(w7, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(w8, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(d3, userRepository.findByEmail("janedoe@gmail.com").orElseThrow());
     }
 
 }
