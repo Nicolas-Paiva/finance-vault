@@ -4,13 +4,18 @@ import com.finance_vault.finance_vault.dto.auth.LoginRequest;
 import com.finance_vault.finance_vault.dto.auth.RegistrationResponse;
 import com.finance_vault.finance_vault.dto.auth.LoginSuccessResponse;
 import com.finance_vault.finance_vault.dto.auth.UserRegistrationRequest;
+import com.finance_vault.finance_vault.dto.transaction.TransactionRequest;
 import com.finance_vault.finance_vault.exception.InvalidRegistrationException;
 import com.finance_vault.finance_vault.exception.InvalidEmailOrPasswordException;
 import com.finance_vault.finance_vault.model.currency.Currency;
+import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
+import com.finance_vault.finance_vault.repository.TransactionRepository;
 import com.finance_vault.finance_vault.repository.UserRepository;
 import com.finance_vault.finance_vault.security.jwt.JWTService;
+import com.finance_vault.finance_vault.service.transaction.TransactionService;
 import com.finance_vault.finance_vault.utils.Utils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,7 +39,10 @@ public class AuthenticationService {
 
     private final JWTService jwtService;
 
+    private final TransactionService transactionService;
 
+
+    @Transactional
     public RegistrationResponse register(UserRegistrationRequest userRegistrationRequest) {
         String email = userRegistrationRequest.getEmail();
         String password = userRegistrationRequest.getPassword();
@@ -74,6 +82,24 @@ public class AuthenticationService {
         // Proceeds to register the user
         userRegistrationRequest.setPassword(passwordEncoder.encode(password));
         userRepository.save(UserRegistrationRequest.toUser(userRegistrationRequest));
+        userRepository.flush();
+
+        // Create initial transactions for display
+        TransactionRequest initialDeposit = new TransactionRequest();
+        initialDeposit.setAmount(1000);
+        initialDeposit.setReceiverEmail(userRegistrationRequest.getEmail());
+
+        TransactionRequest t1 = new TransactionRequest();
+        t1.setAmount(12.75f);
+        t1.setReceiverEmail("kuma@gmail.com");
+
+        TransactionRequest t2 = new TransactionRequest();
+        t2.setAmount(25);
+        t2.setReceiverEmail("kuma@gmail.com");
+
+        transactionService.createTransaction(initialDeposit, userRepository.findByEmail("finance@vault.com").orElseThrow());
+        transactionService.createTransaction(t1, userRepository.findByEmail(userRegistrationRequest.getEmail()).orElseThrow());
+        transactionService.createTransaction(t2, userRepository.findByEmail(userRegistrationRequest.getEmail()).orElseThrow());
 
         String jwt = jwtService.generateToken(email);
 

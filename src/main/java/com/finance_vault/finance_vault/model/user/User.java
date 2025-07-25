@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -49,10 +50,10 @@ public class User {
     private float balance;
 
     @OneToMany(mappedBy = "sender")
-    private List<Transaction> sentTransactions;
+    private List<Transaction> sentTransactions = new ArrayList<>();
 
     @OneToMany(mappedBy = "receiver")
-    private List<Transaction> receivedTransactions;
+    private List<Transaction> receivedTransactions = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

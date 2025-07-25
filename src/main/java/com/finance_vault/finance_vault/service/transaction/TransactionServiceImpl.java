@@ -244,14 +244,14 @@ public class TransactionServiceImpl implements TransactionService {
         return weeklyTotals;
     }
 
-
-    // TODO: Find a way to create transactions from Finance Vault to the user
-
     @Override
+    @Transactional
     public FundsResponse getFunds(FundsRequest request, User user) {
-        user.setBalance(user.getBalance() + request.getAmount());
+        TransactionRequest fundsRequest = new TransactionRequest();
+        fundsRequest.setReceiverEmail(user.getEmail());
+        fundsRequest.setAmount(request.getAmount());
 
-        userRepository.save(user);
+        createTransaction(fundsRequest, userService.getUserFromEmail("finance@vault.com").orElseThrow());
 
         return new FundsResponse(true);
     }

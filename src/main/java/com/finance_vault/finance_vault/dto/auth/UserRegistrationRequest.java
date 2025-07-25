@@ -10,6 +10,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+
 /**
  * Represents the DTO the client must
  * provide in order to perform user
@@ -54,6 +56,8 @@ public class UserRegistrationRequest {
                 .password(userRegistrationRequest.getPassword())
                 .name(userRegistrationRequest.getName())
                 .lastName(userRegistrationRequest.getLastName())
+                .receivedTransactions(new ArrayList<>())
+                .sentTransactions(new ArrayList<>())
                 .balance(1000)
                 .currency(currency)
                 .build();
