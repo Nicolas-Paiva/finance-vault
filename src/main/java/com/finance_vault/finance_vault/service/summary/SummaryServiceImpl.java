@@ -2,6 +2,7 @@ package com.finance_vault.finance_vault.service.summary;
 
 import com.finance_vault.finance_vault.dto.summary.MonthlyTransactionsDTO;
 import com.finance_vault.finance_vault.dto.summary.SummaryDTO;
+import com.finance_vault.finance_vault.dto.summary.WeeklyTotalsDto;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.service.notification.NotificationService;
 import com.finance_vault.finance_vault.service.transaction.TransactionService;
@@ -33,6 +34,10 @@ public class SummaryServiceImpl implements SummaryService {
     @Override
     public MonthlyTransactionsDTO getMonthlyTransactions(User user) {
         return transactionService.getMonthlyTransactions(user);
+    }
+
+    public WeeklyTotalsDto getMonthWeeklyTotals(User user) {
+        return transactionService.getMonthWeeklyWithdrawals(user);
     }
 
 }
