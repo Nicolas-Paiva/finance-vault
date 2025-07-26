@@ -192,9 +192,10 @@ public class TransactionServiceImpl implements TransactionService {
         MonthlyTransactionsDTO monthlyTransactions = new MonthlyTransactionsDTO();
 
         List<TransactionView> deposits = transactionRepository.findMonthlyDepositsInRange(user, firstDayOfTheMonth,
-                        lastDayOfMonth).stream().map(TransactionView::toDeposit).toList();
+                lastDayOfMonth).stream().map(TransactionView::toDeposit).toList();
 
-        List<TransactionView> withdrawals = transactionRepository.findMonthlyWithdrawalsInRange(user, firstDayOfTheMonth,
+        List<TransactionView> withdrawals = transactionRepository.findMonthlyWithdrawalsInRange(user,
+                firstDayOfTheMonth,
                 lastDayOfMonth).stream().map(TransactionView::toWithdrawal).toList();
 
         monthlyTransactions.setDeposits(deposits);
@@ -222,17 +223,23 @@ public class TransactionServiceImpl implements TransactionService {
 
 
         // Converts the first week transactions and reduce them to the total
-        float firstWeekTotals = transactionRepository.findMonthlyWithdrawalsInRange(user, firstDayOfTheMonth.atStartOfDay(),
+        float firstWeekTotals = transactionRepository.findMonthlyWithdrawalsInRange(user,
+                firstDayOfTheMonth.atStartOfDay(),
                 startOfSecondWeek.minusDays(1).atTime(LocalTime.MAX)).stream().map(Transaction::getAmount).reduce(0f,
                 Float::sum);
 
-        float secondWeekTotals = transactionRepository.findMonthlyWithdrawalsInRange(user, startOfSecondWeek.atStartOfDay(),
-                startOfThirdWeek.minusDays(1).atTime(LocalTime.MAX)).stream().map(Transaction::getAmount).reduce(0f, Float::sum);
+        float secondWeekTotals = transactionRepository.findMonthlyWithdrawalsInRange(user,
+                startOfSecondWeek.atStartOfDay(),
+                startOfThirdWeek.minusDays(1).atTime(LocalTime.MAX)).stream().map(Transaction::getAmount).reduce(0f,
+                Float::sum);
 
-        float thirdWeekTotals = transactionRepository.findMonthlyWithdrawalsInRange(user, startOfThirdWeek.atStartOfDay(),
-                startOfFourthWeek.minusDays(1).atTime(LocalTime.MAX)).stream().map(Transaction::getAmount).reduce(0f, Float::sum);
+        float thirdWeekTotals = transactionRepository.findMonthlyWithdrawalsInRange(user,
+                startOfThirdWeek.atStartOfDay(),
+                startOfFourthWeek.minusDays(1).atTime(LocalTime.MAX)).stream().map(Transaction::getAmount).reduce(0f,
+                Float::sum);
 
-        float fourthWeekTotals = transactionRepository.findMonthlyWithdrawalsInRange(user, startOfFourthWeek.atStartOfDay(),
+        float fourthWeekTotals = transactionRepository.findMonthlyWithdrawalsInRange(user,
+                startOfFourthWeek.atStartOfDay(),
                 lastDayOfMonth.atTime(LocalTime.MAX)).stream().map(Transaction::getAmount).reduce(0f, Float::sum);
 
         WeeklyTotalsDto weeklyTotals = new WeeklyTotalsDto();
@@ -243,6 +250,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         return weeklyTotals;
     }
+
 
     @Override
     @Transactional

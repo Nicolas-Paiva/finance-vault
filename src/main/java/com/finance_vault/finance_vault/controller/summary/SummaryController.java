@@ -31,7 +31,7 @@ public class SummaryController {
     /**
      * Returns the user's dashboard data, which includes the user's name
      * and current balance.
-     *
+     * <p>
      * If the user does not exist, a UserNotFoundException is thrown,
      * returning the message to the client.
      */
@@ -41,6 +41,7 @@ public class SummaryController {
         SummaryDTO summaryDTO = summaryService.getSummaryData(user);
         return ResponseEntity.ok(summaryDTO);
     }
+
 
     @GetMapping("/summary/transactions")
     public ResponseEntity<WeeklyTotalsDto> getMonthlyTransactions(Authentication authentication) {

@@ -4,13 +4,9 @@ import com.finance_vault.finance_vault.dto.PaginatedResponse;
 import com.finance_vault.finance_vault.dto.summary.MonthlyTransactionsDTO;
 import com.finance_vault.finance_vault.dto.summary.WeeklyTotalsDto;
 import com.finance_vault.finance_vault.dto.transaction.*;
-import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.queryFilter.TransactionQueryFilter;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 
 public interface TransactionService {
 
@@ -29,7 +25,9 @@ public interface TransactionService {
 
     MonthlyTransactionsDTO getMonthlyTransactions(User user);
 
+
     WeeklyTotalsDto getMonthWeeklyWithdrawals(User user);
+
 
     FundsResponse getFunds(FundsRequest request, User user);
 

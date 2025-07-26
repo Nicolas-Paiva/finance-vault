@@ -2,7 +2,6 @@ package com.finance_vault.finance_vault.dto.auth;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 
 /**
  * Represents the error message the client will receive when

@@ -21,6 +21,7 @@ public class NotificationController {
 
     private final NotificationService notificationService;
 
+
     @GetMapping("/notifications")
     public ResponseEntity<List<TransactionNotificationDTO>> getAllNotifications(Authentication authentication) {
         User user = userService.getUserFromEmail(authentication.getName())

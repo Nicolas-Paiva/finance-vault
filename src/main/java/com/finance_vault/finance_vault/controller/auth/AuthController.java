@@ -26,7 +26,7 @@ public class AuthController {
      * If the registration is successful, a registration
      * response is returned with the created property set to true,
      * as well as message displaying the username.
-     *
+     * <p>
      * If the data provided is invalid, a RegistrationResponse
      * is sent, but created is set to false. A message is also displayed,
      * depending on the error.

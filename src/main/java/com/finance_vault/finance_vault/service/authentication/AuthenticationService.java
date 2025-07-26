@@ -75,7 +75,7 @@ public class AuthenticationService {
 
         // Checks whether the currency is valid
         if (!isValidCurrency(currency)) {
-            throw  InvalidRegistrationException.invalidCurrency();
+            throw InvalidRegistrationException.invalidCurrency();
         }
 
 
@@ -106,7 +106,7 @@ public class AuthenticationService {
     /**
      * Logs the user in using the AuthenticationManager,
      * issuing a JWT to the user.
-     *
+     * <p>
      * If the user fails to authenticate, an InvalidUserNameOrPassword
      * exception is thrown, which causes a LoginErrorResponse to be sent
      * to the user.
@@ -118,10 +118,10 @@ public class AuthenticationService {
 
         // Tries to authenticate the user
         try {
-             authentication = authenticationManager
-                            .authenticate(new UsernamePasswordAuthenticationToken
-                                    (user.getEmail(), user.getPassword()));
-        } catch(Exception e) {
+            authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken
+                            (user.getEmail(), user.getPassword()));
+        } catch (Exception e) {
             throw new InvalidEmailOrPasswordException();
         }
 
@@ -132,6 +132,7 @@ public class AuthenticationService {
 
         throw new InvalidEmailOrPasswordException();
     }
+
 
     public void addInitialTransactions(String newUserEmail) {
         // Create initial transactions for display
@@ -183,18 +184,19 @@ public class AuthenticationService {
         d3.setAmount(55);
         d3.setReceiverEmail(newUserEmail);
 
-        transactionService.createTransaction(initialDeposit, userRepository.findByEmail("finance@vault.com").orElseThrow());
-        transactionService.createTransaction(w1, userRepository.findByEmail(newUserEmail).orElseThrow());
-        transactionService.createTransaction(w2, userRepository.findByEmail(newUserEmail).orElseThrow());
-        transactionService.createTransaction(w3, userRepository.findByEmail(newUserEmail).orElseThrow());
-        transactionService.createTransaction(d1, userRepository.findByEmail("johndoe@gmail.com").orElseThrow());
-        transactionService.createTransaction(w4, userRepository.findByEmail(newUserEmail).orElseThrow());
-        transactionService.createTransaction(w5, userRepository.findByEmail(newUserEmail).orElseThrow());
-        transactionService.createTransaction(w6, userRepository.findByEmail(newUserEmail).orElseThrow());
-        transactionService.createTransaction(d2, userRepository.findByEmail("marcus@newmann.com").orElseThrow());
-        transactionService.createTransaction(w7, userRepository.findByEmail(newUserEmail).orElseThrow());
-        transactionService.createTransaction(w8, userRepository.findByEmail(newUserEmail).orElseThrow());
-        transactionService.createTransaction(d3, userRepository.findByEmail("janedoe@gmail.com").orElseThrow());
+//        transactionService.createTransaction(initialDeposit, userRepository.findByEmail("finance@vault.com")
+//        .orElseThrow());
+//        transactionService.createTransaction(w1, userRepository.findByEmail(newUserEmail).orElseThrow());
+//        transactionService.createTransaction(w2, userRepository.findByEmail(newUserEmail).orElseThrow());
+//        transactionService.createTransaction(w3, userRepository.findByEmail(newUserEmail).orElseThrow());
+//        transactionService.createTransaction(d1, userRepository.findByEmail("johndoe@gmail.com").orElseThrow());
+//        transactionService.createTransaction(w4, userRepository.findByEmail(newUserEmail).orElseThrow());
+//        transactionService.createTransaction(w5, userRepository.findByEmail(newUserEmail).orElseThrow());
+//        transactionService.createTransaction(w6, userRepository.findByEmail(newUserEmail).orElseThrow());
+//        transactionService.createTransaction(d2, userRepository.findByEmail("marcus@newmann.com").orElseThrow());
+//        transactionService.createTransaction(w7, userRepository.findByEmail(newUserEmail).orElseThrow());
+//        transactionService.createTransaction(w8, userRepository.findByEmail(newUserEmail).orElseThrow());
+//        transactionService.createTransaction(d3, userRepository.findByEmail("janedoe@gmail.com").orElseThrow());
     }
 
 }

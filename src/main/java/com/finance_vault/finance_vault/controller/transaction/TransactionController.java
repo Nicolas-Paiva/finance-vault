@@ -6,7 +6,6 @@ import com.finance_vault.finance_vault.dto.transaction.TransactionRequest;
 import com.finance_vault.finance_vault.dto.transaction.TransactionResponse;
 import com.finance_vault.finance_vault.dto.transaction.TransactionView;
 import com.finance_vault.finance_vault.exception.UserNotFoundException;
-import com.finance_vault.finance_vault.model.transaction.Transaction;
 import com.finance_vault.finance_vault.model.user.User;
 import com.finance_vault.finance_vault.repository.queryFilter.TransactionQueryFilter;
 import com.finance_vault.finance_vault.service.transaction.TransactionService;
@@ -17,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 public class TransactionController {
@@ -26,6 +23,7 @@ public class TransactionController {
     private final UserService userService;
 
     private final TransactionService transactionService;
+
 
     /**
      * Creates a transaction between two users.
@@ -41,15 +39,15 @@ public class TransactionController {
 
     /**
      * Returns a Pageable response with TransactionViews of the user.
-     *
+     * <p>
      * The transactions can be filtered and sorted by passing
      * query parameters in the URL.
-     *
+     * <p>
      * The accepted filters are:
      * - type: "deposit" OR "withdrawal"
      * - minValue
      * - maxValue
-     *
+     * <p>
      * SortBy properties are:
      * createdAt OR amount
      */
@@ -61,7 +59,7 @@ public class TransactionController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             Authentication authentication
-            ) {
+    ) {
 
         User user = userService.getUserFromEmail(authentication.getName())
                 .orElseThrow(UserNotFoundException::new);
@@ -74,6 +72,7 @@ public class TransactionController {
 
         return ResponseEntity.ok(transactions);
     }
+
 
     @PostMapping("/transactions/add")
     public ResponseEntity<?> addFunds(Authentication authentication, @RequestBody FundsRequest request) {

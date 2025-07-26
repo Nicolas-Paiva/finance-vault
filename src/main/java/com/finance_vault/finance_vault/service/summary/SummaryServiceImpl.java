@@ -20,7 +20,7 @@ public class SummaryServiceImpl implements SummaryService {
     @Override
     public SummaryDTO getSummaryData(User user) {
         return SummaryDTO.builder()
-                .name(user.getName() + " " + user.getLastName())
+                .name(user.getName())
                 .email(user.getEmail())
                 .balance(user.getBalance())
                 .currency(user.getCurrency())

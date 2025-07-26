@@ -22,6 +22,7 @@ public class ProfileController {
 
     private final UserService userService;
 
+
     @GetMapping("/profile")
     public ResponseEntity<ProfileDataDTO> getUserProfileData(Authentication authentication) {
         User user = userService.getUserFromEmail(authentication.getName())
