@@ -184,19 +184,19 @@ public class AuthenticationService {
         d3.setAmount(55);
         d3.setReceiverEmail(newUserEmail);
 
-//        transactionService.createTransaction(initialDeposit, userRepository.findByEmail("finance@vault.com")
-//        .orElseThrow());
-//        transactionService.createTransaction(w1, userRepository.findByEmail(newUserEmail).orElseThrow());
-//        transactionService.createTransaction(w2, userRepository.findByEmail(newUserEmail).orElseThrow());
-//        transactionService.createTransaction(w3, userRepository.findByEmail(newUserEmail).orElseThrow());
-//        transactionService.createTransaction(d1, userRepository.findByEmail("johndoe@gmail.com").orElseThrow());
-//        transactionService.createTransaction(w4, userRepository.findByEmail(newUserEmail).orElseThrow());
-//        transactionService.createTransaction(w5, userRepository.findByEmail(newUserEmail).orElseThrow());
-//        transactionService.createTransaction(w6, userRepository.findByEmail(newUserEmail).orElseThrow());
-//        transactionService.createTransaction(d2, userRepository.findByEmail("marcus@newmann.com").orElseThrow());
-//        transactionService.createTransaction(w7, userRepository.findByEmail(newUserEmail).orElseThrow());
-//        transactionService.createTransaction(w8, userRepository.findByEmail(newUserEmail).orElseThrow());
-//        transactionService.createTransaction(d3, userRepository.findByEmail("janedoe@gmail.com").orElseThrow());
+        transactionService.createTransaction(initialDeposit, userRepository.findByEmail("finance@vault.com")
+        .orElseThrow());
+        transactionService.createTransaction(w1, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(w2, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(w3, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(d1, userRepository.findByEmail("johndoe@gmail.com").orElseThrow());
+        transactionService.createTransaction(w4, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(w5, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(w6, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(d2, userRepository.findByEmail("marcus@newmann.com").orElseThrow());
+        transactionService.createTransaction(w7, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(w8, userRepository.findByEmail(newUserEmail).orElseThrow());
+        transactionService.createTransaction(d3, userRepository.findByEmail("janedoe@gmail.com").orElseThrow());
     }
 
 }
