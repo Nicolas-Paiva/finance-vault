@@ -5,12 +5,12 @@ server:
 
 spring:
   datasource:
-#    url: jdbc:postgresql://localhost:5433/finance_vault
-#    username: postgres
-#    password: postgres
-    url: jdbc:postgresql://ep-sweet-morning-a21it4qc-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&channelBinding=require
-    username: neondb_owner
-    password: npg_NriVT0WKUds1
+    url: jdbc:postgresql://localhost:5433/finance_vault
+    username: postgres
+    password: postgres
+#    url: jdbc:postgresql://ep-sweet-morning-a21it4qc-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require&channelBinding=require
+#    username: neondb_owner
+#    password: npg_NriVT0WKUds1
     driver-class-name: org.postgresql.Driver
 
 #  jpa:
