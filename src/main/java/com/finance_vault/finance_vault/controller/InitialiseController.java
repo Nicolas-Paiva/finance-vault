@@ -1,4 +1,4 @@
-package com.finance_vault.finance_vault;
+package com.finance_vault.finance_vault.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
